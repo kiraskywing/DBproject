@@ -16,18 +16,18 @@
 <h1 style="color:red">Login</h1>
 <form action="login.php" method="post">
     User Name:
-    <input type="text" name="uname" placeholder="user name"><br>
+    <input type="text" name="uname" placeholder="username"><br>
     Password:
-    <input type="password" name="pwd" placeholder="pwd"><br>
+    <input type="password" name="pwd" placeholder="password"><br>
     <input type="submit" value="Login">
 </form>
 
 <h1>Create Account</h1>
 <form action="register.php" method="post">
     User Name:
-    <input type="text" name="uname" placeholder="user name"><br>
+    <input type="text" name="uname" placeholder="username"><br>
     Password:
-    <input type="password" name="pwd"><br>
+    <input type="password" name="pwd" placeholder="password"><br>
     <input type="submit" value="Create Account">
 </form>
 
