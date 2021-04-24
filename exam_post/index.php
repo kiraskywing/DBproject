@@ -1,3 +1,5 @@
+<!-- This is a test -->
+
 <?php
     session_start();
     # remove all session variables
