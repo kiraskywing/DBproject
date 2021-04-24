@@ -25,7 +25,7 @@
 <h1>Create Account</h1>
 <form action="register.php" method="post">
     User Name:
-    <input type="text" name="uname"><br>
+    <input type="text" name="uname" placeholder="user name"><br>
     Password:
     <input type="password" name="pwd"><br>
     <input type="submit" value="Create Account">
