@@ -76,11 +76,11 @@
                         <h1 class="h3 mb-3 fw-normal">Please Login</h1>
 
                         <div class="form-floating">
-                            <input type="text" name="uname" class="form-control" id="uname" placeholder="Your user name">
+                            <input type="text" name="uname" class="form-control" name="uname" id="uname" placeholder="Your user name">
                             <label for="uname">User Name</label>
                         </div>
                         <div class="form-floating">
-                            <input type="password" class="form-control" id="password" placeholder="Your password">
+                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
                         </div>
 
