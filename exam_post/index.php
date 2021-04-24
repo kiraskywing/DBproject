@@ -13,7 +13,7 @@
 <html>
 <body>
 
-<h1>Login</h1>
+<h1 style="color:red">Login</h1>
 <form action="login.php" method="post">
     User Name:
     <input type="text" name="uname"><br>
