@@ -22,7 +22,7 @@
     <input type="submit" value="Login">
 </form>
 
-<h1>Create Account</h1>
+<h1 style="color:green">Create Account</h1>
 <form action="register.php" method="post">
     User Name:
     <input type="text" name="uname"><br>
