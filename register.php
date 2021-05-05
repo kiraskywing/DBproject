@@ -3,36 +3,50 @@ session_start();
 $_SESSION['Authenticated']=false;
 
 $dbservername='localhost';
-$dbname='NCTU_examdb';
+$dbname='NCTU_maskOrderDB';
 $dbusername='root';
 $dbpassword='';
 
 try 
 {
-    if (!isset($_POST['uname']) || !isset($_POST['pwd'])) 
+    if (!isset($_POST['account']) || !isset($_POST['pwd']) || !isset($_POST['re_pwd']) 
+        || !isset($_POST['full_name']) || !isset($_POST['phone'])|| !isset($_POST['city'])) 
     {
         header("Location: index.php");
         exit();
     }
-    if (empty($_POST['uname']) || empty($_POST['pwd']))
-        throw new Exception('Please input user name and password.');
+    
+    if (empty($_POST['account']) || empty($_POST['pwd'])|| empty($_POST['re_pwd'])
+        || empty($_POST['full_name'])|| empty($_POST['phone'])|| empty($_POST['city']))
+    {   
+        throw new Exception('Please input all information.');
+    }
+    
+    if ($_POST['pwd'] != $_POST['re_pwd'])
+    {
+        throw new Exception('Password mismatch');
+    }
 
-    $uname=$_POST['uname'];
+    $acc=$_POST['account'];
     $pwd=$_POST['pwd'];
+    $fname=$_POST['full_name'];
+    $phone=$_POST['phone'];
+    $city=$_POST['city'];
     $conn = new PDO("mysql:host=$dbservername;dbname=$dbname", $dbusername, $dbpassword);
     # set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    $stmt=$conn->prepare("select username from users where username=:username");
-    $stmt->execute(array('username' => $uname));
+    $stmt=$conn->prepare("select account from users where account=:acc");
+    $stmt->execute(array('acc' => $acc));
 
-    if ($stmt->rowCount()==0) 
+    if ($stmt->rowCount() == 0) 
     {
         $salt=strval(rand(1000,9999));
         
         $hashvalue=hash('sha256', $salt.$pwd);
-        $stmt=$conn->prepare("insert into users (username, password, salt) values (:username, :password, :salt)");
-        $stmt->execute(array('username' => $uname, 'password' => $hashvalue, 'salt' => $salt));
+        $stmt=$conn->prepare("insert into users (account, password, salt, full_name, phone_number, city) 
+                                         values (:acc, :pwd, :salt, :fname, :phone, :city)");
+        $stmt->execute(array('acc' => $acc, 'pwd' => $hashvalue, 'salt' => $salt, 'fname' => $fname, 'phone' => $phone, 'city' => $city));
         
         echo <<<EOT
             <!DOCTYPE html>
@@ -47,6 +61,8 @@ try
         EOT;
         exit();
     }
+    else if ($stmt->rowCount() != 0)
+        throw new Exception("Account has been registered!");
     else
         throw new Exception("Login failed.");
 }
