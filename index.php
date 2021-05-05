@@ -62,10 +62,10 @@
     <body class="text-center">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">LOGIN</button>
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Login</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">SIGN IN</button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Register</button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -76,9 +76,10 @@
                         <h1 class="h3 mb-3 fw-normal">Please Login</h1>
 
                         <div class="form-floating">
-                            <input type="text" name="uname" class="form-control" name="uname" id="uname" placeholder="Your user name">
-                            <label for="uname">User Name</label>
+                            <input type="text" class="form-control" name="uname" id="uname" placeholder="Your account">
+                            <label for="uname">Account</label>
                         </div>
+                        
                         <div class="form-floating">
                             <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
@@ -93,18 +94,39 @@
                 <main class="form-signin">
                     <form action="register.php" method="post">
                         <img src="./login.png" alt="" height="120" width="108">
-                        <h1 class="h3 mb-3 fw-normal">Please Sign In</h1>
+                        <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input type="text" name="uname" class="form-control" id="uname" placeholder="Your user name">
-                            <label for="uname">User Name</label>
+                            <input type="text" class="form-control" name="uname" id="uname" placeholder="Your account">
+                            <label for="uname">Account</label>
                         </div>
+                        
                         <div class="form-floating">
-                            <input type="password" class="form-control" id="password" placeholder="Your password">
+                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
                         </div>
 
-                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Sign In</button>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
+                            <label for="password">Comfirm Password</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="password" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
+                            <label for="password">Full Name</label>
+                        </div>
+                        
+                        <div class="form-floating">
+                            <input type="password" class="form-control" name="phone" id="phone" placeholder="Your phone number">
+                            <label for="password">Phone Number</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="password" class="form-control" name="city" id="city" placeholder="Your city of residence">
+                            <label for="password">City of residence</label>
+                        </div>
+
+                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For HW demo</p>
                     </form>
                 </main>
