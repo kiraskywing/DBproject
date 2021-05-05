@@ -4,27 +4,27 @@ session_start();
 $_SESSION['Authenticated']=false;
 
 $dbservername='localhost';
-$dbname='NCTU_examdb';
+$dbname='NCTU_maskOrderDB';
 $dbusername='root';
 $dbpassword='';
 
 try
 {
-    if (!isset($_POST['uname']) || !isset($_POST['pwd']))
+    if (!isset($_POST['account']) || !isset($_POST['pwd']))
     {
         header("Location: index.php");
         exit();
     }
-    if (empty($_POST['uname']) || empty($_POST['pwd']))
+    if (empty($_POST['account']) || empty($_POST['pwd']))
         throw new Exception('Please input user name and password.');
 
-    $uname=$_POST['uname'];
+    $acc=$_POST['account'];
     $pwd=$_POST['pwd'];
     $conn = new PDO("mysql:host=$dbservername;dbname=$dbname", $dbusername, $dbpassword);
     # set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-    $stmt=$conn->prepare("select username, password, salt from users where username=:username");
-    $stmt->execute(array('username' => $uname));
+    $stmt=$conn->prepare("select account, password, salt from users where account=:acc");
+    $stmt->execute(array('acc' => $acc));
 
     if ($stmt->rowCount()==1)
     {
@@ -32,8 +32,9 @@ try
         if ($row['password'] == hash('sha256', $row['salt'].$_POST['pwd']))
         {
             $_SESSION['Authenticated']=true;
-            $_SESSION['Username']=$row[0];
-            header("Location: list.php?page=1");
+            $_SESSION['account']=$row[0];
+            // header("Location: list.php?page=1");
+            header("Location: userPage.php");
             exit();
         }
         else

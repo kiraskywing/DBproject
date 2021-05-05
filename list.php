@@ -8,7 +8,7 @@ $dbpassword='';
 
 try
 {
-    if (!isset($_SESSION['Authenticated']) || $_SESSION['Authenticated']!=true)
+    if (!isset($_SESSION['Authenticated']) || $_SESSION['Authenticated'] != true)
     {
         header("Location: index.php");
         exit();

@@ -1,10 +1,34 @@
 <?php
-    session_start();
-    # remove all session variables
+session_start();
+
+$dbservername='localhost';
+$dbname='NCTU_maskOrderDB';
+$dbusername='root';
+$dbpassword='';
+
+try
+{
+    if (!isset($_SESSION['Authenticated']) || $_SESSION['Authenticated'] != true)
+        throw new Exception("Please login");
+}
+catch (Exception $e)
+{
+    $msg=$e->getMessage();
     session_unset(); 
-    # destroy the session
-    session_destroy();
-    $_SESSION['Authenticated']=false;
+    session_destroy(); 
+
+    echo <<<EOT
+        <!DOCTYPE html>
+            <html>
+                <body>
+                <script>
+                    alert("$msg");
+                    window.location.replace("index.php");
+                </script>
+                </body>
+            </html> 
+    EOT;
+}
 ?>
 
 <!DOCTYPE html>
@@ -62,10 +86,13 @@
     <body class="text-center">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Login</button>
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Register</button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Shop</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" onClick="window.location.replace('index.php');">Logout</button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
