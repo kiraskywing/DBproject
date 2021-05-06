@@ -90,7 +90,7 @@
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <form action="register_shop.php" method="post">
+                    
                     <?php 
                         try {
                             $stmt = $connection->prepare("select * from shop_staff where is_master = true and staff_id =:id");
@@ -98,48 +98,57 @@
                             
                             if ($stmt->rowCount() == 0) {
                                 echo<<<EOT
-                                <img src="./login.png" alt="" height="120" width="108">
-                                <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
-        
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
-                                    <label for="account">Shop Name</label>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" name="shop_city" id="shop_city" placeholder=" ">
-                                    <label for="password">Shop City</label>
-                                </div>
-        
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
-                                    <label for="re_password">Mask Price</label>
-                                </div>
-        
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
-                                    <label for="full_name">Mask Amount</label>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
-                                    <label for="phone">Shop's Phone Number</label>
-                                </div>
-        
-                                <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                <form action="register_shop.php" method="post">
+                                    <img src="./login.png" alt="" height="120" width="108">
+                                    <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
+            
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                        <label for="shop_name">Shop Name</label>
+                                    </div>
+                                    
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="shop_city" id="shop_city" placeholder=" ">
+                                        <label for="shop_city">Shop City</label>
+                                    </div>
+            
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
+                                        <label for="pre_mask_price">Mask Price</label>
+                                    </div>
+            
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
+                                        <label for="stock_quantity">Mask Amount</label>
+                                    </div>
+                                    
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
+                                        <label for="shop_phone">Shop's Phone Number</label>
+                                    </div>
+            
+                                    <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                </form>
                                 EOT;
                             }
                         }
                         catch(Exception $e) {
-                            $msg=$e->getMessage();
-                            session_unset(); 
-                            session_destroy(); 
-                            echo $e->getMessage();
+                            $msg = $e->getMessage();
+                            echo <<<EOT
+                                <!DOCTYPE html>
+                                <html>
+                                    <body>
+                                        <script>
+                                            alert("$msg");
+                                            window.location.replace("userPage.php");
+                                        </script>
+                                    </body>
+                                </html>
+                            EOT;
                         }
                     ?>
                         
-                        <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
-                    </form>
+                    <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
         </div>
