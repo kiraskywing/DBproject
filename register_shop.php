@@ -26,6 +26,14 @@ try {
                                 values (:shop_name, :shop_city, :pre_mask_price, :stock_quantity, :shop_phone)");
     $stmt->execute(array('shop_name' => $shop_name, 'shop_city' => $shop_city , 'pre_mask_price' => $pre_mask_price,
                             'stock_quantity' => $stock_quantity, 'shop_phone' => $shop_phone));
+    
+    $stmt=$connection->prepare("select shop_id from shops");
+    $stmt->execute();
+    $row = $stmt->fetch();     
+    $staff_id = $_SESSION['user_id'];
+    $shop_id = $row[0];
+    $stmt=$connection->prepare("insert into shop_staff (staff_id, shop_id, is_master) values (:staff_id, :shop_id, true)");                            
+    $stmt->execute(array('staff_id' => $staff_id, 'shop_id' => $shop_id));
                                 
     echo <<<EOT
         <!DOCTYPE html>
