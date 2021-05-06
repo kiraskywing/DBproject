@@ -57,9 +57,41 @@
             .login-button {
                 margin-top: 15px;
             }
+            .form-floating {
+                position: relative;
+            }
+            .place-right {
+                position: absolute;
+                left: 325px;
+                bottom: 15px;
+                color: red;
+                display: none;
+                width: 250px;
+            }
+            .show {
+                display: block;
+            }
         </style>
     </head>
     <body class="text-center">
+            <script>
+                function isNumber(element) {
+                    const nonNumberTester = /\D/;                    
+                    if (nonNumberTester.test(element.value) || element.value.length !== 10) {
+                        document.getElementById('phone-notice').classList.add('show');
+                    } else {
+                        document.getElementById('phone-notice').classList.remove('show');
+                    }
+                }
+                function confirmPassword(element) {
+                    const passwordTester = /[a-zA-Z\d]{4,20}$/;
+                    if (!passwordTester.test(element.value)) {
+                        document.getElementById('password-notice').classList.add('show');
+                    } else {
+                        document.getElementById('password-notice').classList.remove('show');
+                    }
+                }
+            </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Login</button>
@@ -102,8 +134,9 @@
                         </div>
                         
                         <div class="form-floating">
-                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
+                            <input onchange="confirmPassword(this)" type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
+                            <div id="password-notice" class="place-right">密碼為4~20碼，只能有英數</div>
                         </div>
 
                         <div class="form-floating">
@@ -117,8 +150,9 @@
                         </div>
                         
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
+                            <input onchange="isNumber(this)" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
+                            <div id="phone-notice" class="place-right">電話號碼格式錯誤(全數字，10碼)</div>
                         </div>
 
                         <div class="form-floating">
