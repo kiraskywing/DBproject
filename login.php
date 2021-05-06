@@ -2,11 +2,7 @@
 session_start();
 
 $_SESSION['Authenticated']=false;
-
-$dbservername='localhost';
-$dbname='NCTU_maskOrderDB';
-$dbusername='root';
-$dbpassword='';
+include "db_connection.php";
 
 try
 {
@@ -20,10 +16,7 @@ try
 
     $acc=$_POST['account'];
     $pwd=$_POST['pwd'];
-    $conn = new PDO("mysql:host=$dbservername;dbname=$dbname", $dbusername, $dbpassword);
-    # set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);	
-    $stmt=$conn->prepare("select account, password, salt from users where account=:acc");
+    $stmt=$connection->prepare("select user_id, account, password, salt, phone_number, full_name, city from users where account=:acc");
     $stmt->execute(array('acc' => $acc));
 
     if ($stmt->rowCount()==1)
@@ -32,9 +25,22 @@ try
         if ($row['password'] == hash('sha256', $row['salt'].$_POST['pwd']))
         {
             $_SESSION['Authenticated']=true;
-            $_SESSION['account']=$row[0];
-            // header("Location: list.php?page=1");
-            header("Location: userPage.php");
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['account'] = $row['account'];
+            $_SESSION['phone_number'] = $row['phone_number'];
+            $_SESSION['full_name'] = $row['full_name'];
+            $_SESSION['city'] = $row['city'];
+            echo <<<EOT
+                <!DOCTYPE html>
+                <html>
+                    <body>
+                        <script>
+                            alert("Login success. Redirect the page");
+                            window.location.replace("userPage.php");
+                        </script>
+                    </body>
+                </html>
+            EOT;
             exit();
         }
         else
