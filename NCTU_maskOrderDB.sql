@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： localhost
--- 產生時間： 2021 年 05 月 05 日 05:23
+-- 產生時間： 2021 年 05 月 06 日 13:47
 -- 伺服器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.2
 
@@ -52,6 +52,13 @@ CREATE TABLE `shops` (
   `phone_number` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- 傾印資料表的資料 `shops`
+--
+
+INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_quantity`, `phone_number`) VALUES
+(1, 'test_shop', 'HsinChu', 5, 100, '0988363705');
+
 -- --------------------------------------------------------
 
 --
@@ -63,6 +70,13 @@ CREATE TABLE `shop_staff` (
   `shop_id` int(11) NOT NULL,
   `is_master` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 傾印資料表的資料 `shop_staff`
+--
+
+INSERT INTO `shop_staff` (`staff_id`, `shop_id`, `is_master`) VALUES
+(1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -125,13 +139,13 @@ ALTER TABLE `users`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `shops`
 --
 ALTER TABLE `shops`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 已傾印資料表的限制式

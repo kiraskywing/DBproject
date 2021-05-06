@@ -1,35 +1,4 @@
-<?php
-session_start();
-
-$dbservername='localhost';
-$dbname='NCTU_maskOrderDB';
-$dbusername='root';
-$dbpassword='';
-
-try
-{
-    if (!isset($_SESSION['Authenticated']) || $_SESSION['Authenticated'] != true)
-        throw new Exception("Please login");
-}
-catch (Exception $e)
-{
-    $msg=$e->getMessage();
-    session_unset(); 
-    session_destroy(); 
-
-    echo <<<EOT
-        <!DOCTYPE html>
-            <html>
-                <body>
-                <script>
-                    alert("$msg");
-                    window.location.replace("index.php");
-                </script>
-                </body>
-            </html> 
-    EOT;
-}
-?>
+<?php include "authentication.php"; ?>
 
 <!DOCTYPE html>
 <html>
@@ -92,68 +61,83 @@ catch (Exception $e)
                     <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Shop</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" onClick="window.location.replace('index.php');">Logout</button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" 
+                            onClick="alert('Logout success'); window.location.replace('index.php');">Logout
+                    </button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <main class="form-signin">
-                    <form action="login.php" method="post">
-                        <img src="./login.png" alt="" height="120" width="108">
-                        <h1 class="h3 mb-3 fw-normal">Please Login</h1>
+                    <h2>Profile</h2>
+                    <?php
+                        echo "Account: " . $_SESSION['account'] . "<br>" .
+                             "Full name: " . $_SESSION['full_name'] . "<br>" .
+                             "Phone number: " . $_SESSION['phone_number'] . "<br>" .
+                             "City of residence: " . $_SESSION['city'] . "<br>";
+                    ?>
 
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="account" id="account" placeholder="Your account">
-                            <label for="account">Account</label>
-                        </div>
-                        
-                        <div class="form-floating">
-                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
-                            <label for="password">Password</label>
-                        </div>
-
-                        <button class="login-button w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
+                    <h2>Shop List</h2>
+                    <form action="search_shop.php" method="post">
+                        Shop: <input type="text" name="shop_name"><br>
+                        City: <input type="text" name="shop_city"><br>
+                        Price: min<input type="text" name="min_price"><br> 
+                               max<input type="text" name="max_price"><br>
+                        Amount: <input type="text" name="amount"><br>
+                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Search</button>
                     </form>
                 </main>
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <form action="register.php" method="post">
-                        <img src="./login.png" alt="" height="120" width="108">
-                        <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
-
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="account" id="account" placeholder="Your account">
-                            <label for="account">Account</label>
-                        </div>
+                    <form action="register_shop.php" method="post">
+                    <?php 
+                        try {
+                            $stmt = $connection->prepare("select * from shop_staff where is_master = true and staff_id =:id");
+                            $stmt->execute(array('id' => $_SESSION['user_id']));
+                            
+                            if ($stmt->rowCount() == 0) {
+                                echo<<<EOT
+                                <img src="./login.png" alt="" height="120" width="108">
+                                <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
+        
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                    <label for="account">Shop Name</label>
+                                </div>
+                                
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" name="shop_city" id="shop_city" placeholder=" ">
+                                    <label for="password">Shop City</label>
+                                </div>
+        
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
+                                    <label for="re_password">Mask Price</label>
+                                </div>
+        
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
+                                    <label for="full_name">Mask Amount</label>
+                                </div>
+                                
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
+                                    <label for="phone">Shop's Phone Number</label>
+                                </div>
+        
+                                <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                EOT;
+                            }
+                        }
+                        catch(Exception $e) {
+                            $msg=$e->getMessage();
+                            session_unset(); 
+                            session_destroy(); 
+                            echo $e->getMessage();
+                        }
+                    ?>
                         
-                        <div class="form-floating">
-                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
-                            <label for="password">Password</label>
-                        </div>
-
-                        <div class="form-floating">
-                            <input type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
-                            <label for="re_password">Comfirm Password</label>
-                        </div>
-
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
-                            <label for="full_name">Full Name</label>
-                        </div>
-                        
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
-                            <label for="phone">Phone Number</label>
-                        </div>
-
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="city" id="city" placeholder="Your city of residence">
-                            <label for="city">City of residence</label>
-                        </div>
-
-                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                     </form>
                 </main>

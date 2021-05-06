@@ -2,13 +2,7 @@
 session_start();
 $_SESSION['Authenticated']=false;
 
-$dbservername='localhost';
-$dbname='NCTU_maskOrderDB';
-$dbusername='root';
-$dbpassword='';
-
-try 
-{
+try {
     if (!isset($_POST['account']) || !isset($_POST['pwd']) || !isset($_POST['re_pwd']) 
         || !isset($_POST['full_name']) || !isset($_POST['phone'])|| !isset($_POST['city'])) 
     {
@@ -32,11 +26,9 @@ try
     $fname=$_POST['full_name'];
     $phone=$_POST['phone'];
     $city=$_POST['city'];
-    $conn = new PDO("mysql:host=$dbservername;dbname=$dbname", $dbusername, $dbpassword);
-    # set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    $stmt=$conn->prepare("select account from users where account=:acc");
+    include "db_connection.php";
+    $stmt=$connection->prepare("select account from users where account=:acc");
     $stmt->execute(array('acc' => $acc));
 
     if ($stmt->rowCount() == 0) 
@@ -44,7 +36,7 @@ try
         $salt=strval(rand(1000,9999));
         
         $hashvalue=hash('sha256', $salt.$pwd);
-        $stmt=$conn->prepare("insert into users (account, password, salt, full_name, phone_number, city) 
+        $stmt=$connection->prepare("insert into users (account, password, salt, full_name, phone_number, city) 
                                          values (:acc, :pwd, :salt, :fname, :phone, :city)");
         $stmt->execute(array('acc' => $acc, 'pwd' => $hashvalue, 'salt' => $salt, 'fname' => $fname, 'phone' => $phone, 'city' => $city));
         
@@ -53,7 +45,7 @@ try
             <html>
                 <body>
                     <script>
-                        alert("Create an account successfully. Please log in.");
+                        alert("Register successfully. Please log in.");
                         window.location.replace("index.php");
                     </script>
                 </body>
@@ -87,5 +79,3 @@ catch(Exception $e)
 }
 
 ?>
-</body>
-</html>
