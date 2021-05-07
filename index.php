@@ -136,7 +136,7 @@
                         <div class="form-floating">
                             <input onchange="confirmPassword(this)" type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
-                            <div id="password-notice" class="place-right">密碼為4~20碼，只能有英數</div>
+                            <div id="password-notice" class="place-right">Invalid format (only upper/lower-case character and number are allowed)</div>
                         </div>
 
                         <div class="form-floating">
@@ -152,19 +152,16 @@
                         <div class="form-floating">
                             <input onchange="isNumber(this)" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">invalid format (10-digits is required)</div>
+                            <div id="phone-notice" class="place-right">Invalid format (only 10 digits)</div>
                         </div>
 
                         <div class="form-floating">
                             City of Residence
                             <select name="city">
-                                <?php 
-                                    include "db_connection.php";
-                                    $stmt = $connection->prepare("select city_name from cities");
-                                    $stmt->execute();
-
-                                    while ($row = $stmt->fetch())
-                                        echo "<option value=\"" . $row[0] . "\">" . $row[0] . "</option>";
+                                <?php
+                                    include "parameters.php";
+                                    foreach ($cities as $city)
+                                        echo "<option value=\"" . $city . "\">" . $city . "</option>";
                                 ?>
                             </select>
                         </div>

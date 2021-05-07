@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： localhost
--- 產生時間： 2021 年 05 月 07 日 05:00
+-- 產生時間： 2021 年 05 月 07 日 13:14
 -- 伺服器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.2
 
@@ -20,55 +20,6 @@ SET time_zone = "+00:00";
 --
 -- 資料庫： `NCTU_maskOrderDB`
 --
-
--- --------------------------------------------------------
-
---
--- 資料表結構 `cities`
---
-
-CREATE TABLE `cities` (
-  `city_id` int(11) NOT NULL,
-  `city_name` varchar(17) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- 傾印資料表的資料 `cities`
---
-
-INSERT INTO `cities` (`city_id`, `city_name`) VALUES
-(1, 'Keelung City'),
-(2, 'New Taipei City'),
-(3, 'Taipei City'),
-(4, 'Taoyuan City'),
-(5, 'Hsinchu County'),
-(6, 'Hsinchu City'),
-(7, 'Miaoli City'),
-(8, 'Miaoli County'),
-(9, 'Taichung City'),
-(10, 'Changhua County'),
-(11, 'Changhua City'),
-(12, 'Nantou City'),
-(13, 'Nantou County'),
-(14, 'Yunlin County'),
-(15, 'Chiayi County'),
-(16, 'Chiayi City'),
-(17, 'Tainan City'),
-(18, 'Kaohsiung City'),
-(19, 'Pingtung County'),
-(20, 'Pingtung City'),
-(21, 'Yilan County'),
-(22, 'Yilan City'),
-(23, 'Hualien County'),
-(24, 'Hualien City'),
-(25, 'Taitung City'),
-(26, 'Taitung County'),
-(27, 'Penghu County'),
-(28, 'Green Island'),
-(29, 'Orchid Island'),
-(30, 'Kinmen County'),
-(31, 'Matsu'),
-(32, 'Lienchiang County');
 
 -- --------------------------------------------------------
 
@@ -98,7 +49,7 @@ CREATE TABLE `shops` (
   `city` varchar(17) NOT NULL,
   `per_mask_price` int(11) NOT NULL,
   `stock_quantity` int(11) NOT NULL,
-  `phone_number` varchar(10) NOT NULL
+  `phone_number` char(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -106,27 +57,27 @@ CREATE TABLE `shops` (
 --
 
 INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_quantity`, `phone_number`) VALUES
-(4, 'Shop AA', 'Taoyuan City', 50, 5, '0988599934'),
-(5, 'BB shop', 'Taitung City', 500, 1000, '0963714803');
+(3, 'Shop AA', 'Taipei City', 50, 5, '0963714803'),
+(4, 'BB shop', 'Taichung City', 500, 1000, '0917466219');
 
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `shop_staff`
+-- 資料表結構 `shop_staffs`
 --
 
-CREATE TABLE `shop_staff` (
+CREATE TABLE `shop_staffs` (
   `staff_id` int(11) NOT NULL,
   `shop_id` int(11) NOT NULL,
-  `is_master` tinyint(1) NOT NULL
+  `isMaster` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- 傾印資料表的資料 `shop_staff`
+-- 傾印資料表的資料 `shop_staffs`
 --
 
-INSERT INTO `shop_staff` (`staff_id`, `shop_id`, `is_master`) VALUES
-(1, 4, 1),
+INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
+(1, 3, 1),
 (2, 4, 1);
 
 -- --------------------------------------------------------
@@ -159,12 +110,6 @@ INSERT INTO `users` (`user_id`, `account`, `password`, `salt`, `phone_number`, `
 --
 
 --
--- 資料表索引 `cities`
---
-ALTER TABLE `cities`
-  ADD PRIMARY KEY (`city_id`);
-
---
 -- 資料表索引 `orders`
 --
 ALTER TABLE `orders`
@@ -177,10 +122,11 @@ ALTER TABLE `shops`
   ADD PRIMARY KEY (`shop_id`);
 
 --
--- 資料表索引 `shop_staff`
+-- 資料表索引 `shop_staffs`
 --
-ALTER TABLE `shop_staff`
-  ADD PRIMARY KEY (`staff_id`,`shop_id`);
+ALTER TABLE `shop_staffs`
+  ADD PRIMARY KEY (`staff_id`,`shop_id`),
+  ADD KEY `shop_id` (`shop_id`);
 
 --
 -- 資料表索引 `users`
@@ -193,22 +139,27 @@ ALTER TABLE `users`
 --
 
 --
--- 使用資料表自動遞增(AUTO_INCREMENT) `cities`
---
-ALTER TABLE `cities`
-  MODIFY `city_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
-
---
 -- 使用資料表自動遞增(AUTO_INCREMENT) `shops`
 --
 ALTER TABLE `shops`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- 已傾印資料表的限制式
+--
+
+--
+-- 資料表的限制式 `shop_staffs`
+--
+ALTER TABLE `shop_staffs`
+  ADD CONSTRAINT `shop_staffs_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `shop_staffs_ibfk_2` FOREIGN KEY (`staff_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

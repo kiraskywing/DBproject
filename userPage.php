@@ -1,4 +1,7 @@
-<?php include "authentication.php"; ?>
+<?php 
+    include "authentication.php";
+    include "parameters.php"; 
+?>
 
 <!DOCTYPE html>
 <html>
@@ -80,10 +83,23 @@
                     <h2>Shop List</h2>
                     <form action="search_shop.php" method="post">
                         Shop: <input type="text" name="shop_name"><br>
-                        City: <input type="text" name="shop_city"><br>
+                        City: <select name="shop_city">
+                                <option value="">All</option>
+                                <?php
+                                    foreach ($cities as $city)
+                                        echo '<option value="' . $city . '">' . $city . '</option>';
+                                ?>
+                              </select><br>
                         Price: min<input type="text" name="min_price"><br> 
                                max<input type="text" name="max_price"><br>
-                        Amount: <input type="text" name="amount"><br>
+                        Amount: <select name="amount">
+                                    <option value="-1">All</option>
+                                    <?php
+                                        for ($i = 0; $i < count($amount); $i++)
+                                            echo '<option value="' . $i . '">' . $amount[$i] . '</option>';
+                                    ?>
+                                </select><br>
+                        Only show the shop I work at <input type="checkbox" value="1" name="isShopStaff">
                         <button class="login-button w-100 btn btn-lg btn-success" type="submit">Search</button>
                     </form>
                 </main>
@@ -93,7 +109,7 @@
                     
                     <?php 
                         try {
-                            $stmt = $connection->prepare("select * from shop_staff where is_master = true and staff_id =:id");
+                            $stmt = $connection->prepare("select * from shop_staffs where isMaster = true and staff_id =:id");
                             $stmt->execute(array('id' => $_SESSION['user_id']));
                             
                             if ($stmt->rowCount() == 0) {
@@ -108,17 +124,14 @@
                                     </div>
                                 EOT;
                                 
-                                $stmt = $connection->prepare("select city_name from cities");
-                                $stmt->execute();
-                                
                                 echo<<<EOT
                                     <div class="form-floating">
                                         City of Shop Location
                                         <select name="shop_city">
                                     EOT;
                                 
-                                while ($row = $stmt->fetch())
-                                    echo "<option value=\"" . $row[0] . "\">" . $row[0] . "</option>";
+                                foreach ($cities as $city)
+                                    echo "<option value=\"" . $city . "\">" . $city . "</option>";
                                 
                                 echo<<<EOT
                                         </select>
