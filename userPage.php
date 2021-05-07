@@ -72,9 +72,9 @@
                     <h2>Profile</h2>
                     <?php
                         echo "Account: " . $_SESSION['account'] . "<br>" .
-                             "Full name: " . $_SESSION['full_name'] . "<br>" .
-                             "Phone number: " . $_SESSION['phone_number'] . "<br>" .
-                             "City of residence: " . $_SESSION['city'] . "<br>";
+                             "Full Name: " . $_SESSION['full_name'] . "<br>" .
+                             "Phone Number: " . $_SESSION['phone_number'] . "<br>" .
+                             "City of Residence: " . $_SESSION['city'] . "<br>";
                     ?>
 
                     <h2>Shop List</h2>
@@ -106,17 +106,31 @@
                                         <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
                                         <label for="shop_name">Shop Name</label>
                                     </div>
-                                    
+                                EOT;
+                                
+                                $stmt = $connection->prepare("select city_name from cities");
+                                $stmt->execute();
+                                
+                                echo<<<EOT
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" name="shop_city" id="shop_city" placeholder=" ">
-                                        <label for="shop_city">Shop City</label>
+                                        City of Shop Location
+                                        <select name="shop_city">
+                                    EOT;
+                                
+                                while ($row = $stmt->fetch())
+                                    echo "<option value=\"" . $row[0] . "\">" . $row[0] . "</option>";
+                                
+                                echo<<<EOT
+                                        </select>
                                     </div>
-            
+                                EOT;
+                                
+                                echo<<<EOT
                                     <div class="form-floating">
                                         <input type="text" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
                                         <label for="pre_mask_price">Mask Price</label>
                                     </div>
-            
+                                
                                     <div class="form-floating">
                                         <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
                                         <label for="stock_quantity">Mask Amount</label>

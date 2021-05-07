@@ -152,12 +152,21 @@
                         <div class="form-floating">
                             <input onchange="isNumber(this)" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">電話號碼格式錯誤(全數字，10碼)</div>
+                            <div id="phone-notice" class="place-right">invalid format (10-digits is required)</div>
                         </div>
 
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="city" id="city" placeholder="Your city of residence">
-                            <label for="city">City of residence</label>
+                            City of Residence
+                            <select name="city">
+                                <?php 
+                                    include "db_connection.php";
+                                    $stmt = $connection->prepare("select city_name from cities");
+                                    $stmt->execute();
+
+                                    while ($row = $stmt->fetch())
+                                        echo "<option value=\"" . $row[0] . "\">" . $row[0] . "</option>";
+                                ?>
+                            </select>
                         </div>
 
                         <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
