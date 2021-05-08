@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$_SESSION['Authenticated']=false;
+$_SESSION['Authenticated'] = false;
 include "db_connection.php";
 
 try
@@ -12,19 +12,19 @@ try
         exit();
     }
     if (empty($_POST['account']) || empty($_POST['pwd']))
-        throw new Exception('Please input user name and password.');
+        throw new Exception('Login Failed!');
 
     $acc=$_POST['account'];
     $pwd=$_POST['pwd'];
-    $stmt=$connection->prepare("select user_id, account, password, salt, phone_number, full_name, city from users where account=:acc");
+    $stmt=$connection->prepare("select * from users where account=:acc");
     $stmt->execute(array('acc' => $acc));
 
-    if ($stmt->rowCount()==1)
+    if ($stmt->rowCount() == 1)
     {
         $row = $stmt->fetch();
         if ($row['password'] == hash('sha256', $row['salt'].$_POST['pwd']))
         {
-            $_SESSION['Authenticated']=true;
+            $_SESSION['Authenticated'] = true;
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['account'] = $row['account'];
             $_SESSION['phone_number'] = $row['phone_number'];
@@ -35,7 +35,7 @@ try
                 <html>
                     <body>
                         <script>
-                            alert("Login success. Redirect the page");
+                            alert("Login Success! Redirect the page");
                             window.location.replace("userPage.php");
                         </script>
                     </body>
@@ -44,10 +44,10 @@ try
             exit();
         }
         else
-            throw new Exception('Login failed.');
+            throw new Exception('Login Failed!');
     }
     else
-        throw new Exception('Login failed.');
+        throw new Exception('Login Failed!');
 }
 
 catch(Exception $e)
