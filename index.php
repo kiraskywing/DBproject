@@ -75,20 +75,85 @@
     </head>
     <body class="text-center">
             <script>
-                function isNumber(element) {
-                    const nonNumberTester = /\D/;                    
-                    if (nonNumberTester.test(element.value) || element.value.length !== 10) {
-                        document.getElementById('phone-notice').classList.add('show');
+                // local variable.
+                const inputStatus = {
+                    ACCOUNT: false,
+                    PASSWORD: false,
+                    CONFIRM_PASSWORD: false,
+                    FULL_NAME: false,
+                    PHONE: false,
+                    CITY: false,
+                };
+                // utils.
+                function disableSubmitButton() {
+                    document.getElementById('submit-button').disabled = true;
+                }
+                function enableSubmitButton() {
+                    document.getElementById('submit-button').disabled = false;
+                }
+                function showNotice(idName) {
+                    document.getElementById(idName).classList.add('show');
+                }
+                function hideNotice(idName) {
+                    document.getElementById(idName).classList.remove('show');
+                }
+                function confirmAllStatus() {
+                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE, CITY } = inputStatus;
+                    return (
+                        ACCOUNT
+                        && PASSWORD
+                        && CONFIRM_PASSWORD
+                        && FULL_NAME
+                        && PHONE
+                        && CITY
+                    );
+                }
+                // validate functions.
+                function isRequired(element, noticeElementId, inputStatusKey) {
+                    if (element.value.length === 0) {
+                        showNotice(noticeElementId);
+                        inputStatus[inputStatusKey] = false;
+                        disableSubmitButton();
                     } else {
-                        document.getElementById('phone-notice').classList.remove('show');
+                        hideNotice(noticeElementId);
+                        inputStatus[inputStatusKey] = true;
+                        if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
-                function confirmPassword(element) {
+                function confirmAccountOrPassword(element, noticeElementId, inputStatusKey) {
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
                     if (!passwordTester.test(element.value)) {
-                        document.getElementById('password-notice').classList.add('show');
+                        showNotice(noticeElementId);
+                        inputStatus[inputStatusKey] = false;
+                        disableSubmitButton();
                     } else {
-                        document.getElementById('password-notice').classList.remove('show');
+                        hideNotice(noticeElementId);
+                        inputStatus[inputStatusKey] = true;
+                        if (confirmAllStatus()) enableSubmitButton();
+                    }
+                }
+                function doubleCheckPassword(element, inputStatusKey) {
+                    console.log(document.getElementsByClassName('pwd')[0].value);
+                    if (element.value !== document.getElementsByClassName('pwd')[0].value) {
+                        showNotice('confirm-password-notice');
+                        inputStatus[inputStatusKey] = false;
+                        disableSubmitButton();
+                    } else {
+                        hideNotice('confirm-password-notice');
+                        inputStatus[inputStatusKey] = true;
+                        if (confirmAllStatus()) enableSubmitButton();
+                    }
+                }
+                function isNumber(element, inputStatusKey) {
+                    const nonNumberTester = /\D/;                    
+                    if (nonNumberTester.test(element.value) || element.value.length !== 10) {
+                        showNotice('phone-notice');
+                        inputStatus[inputStatusKey] = false;
+                        disableSubmitButton();
+                    } else {
+                        hideNotice('phone-notice');
+                        inputStatus[inputStatusKey] = true;
+                        if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
             </script>
@@ -129,38 +194,42 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input onchange="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT')" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
+                            <div id="account-notice" class="place-right">帳號為4~20碼，只能有英數</div>
                         </div>
                         
                         <div class="form-floating">
-                            <input onchange="confirmPassword(this)" type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
+                            <input onchange="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
                             <div id="password-notice" class="place-right">密碼為4~20碼，只能有英數</div>
                         </div>
 
                         <div class="form-floating">
-                            <input type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
-                            <label for="re_password">Comfirm Password</label>
+                            <input onchange="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
+                            <label for="re_password">Confirm Password</label>
+                            <div id="confirm-password-notice" class="place-right">確認密碼與原本不同</div>
                         </div>
 
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
+                            <input onchange="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
                             <label for="full_name">Full Name</label>
+                            <div id="full-name-notice" class="place-right">Full Name 不能為空</div>
                         </div>
                         
                         <div class="form-floating">
-                            <input onchange="isNumber(this)" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
+                            <input onchange="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
                             <div id="phone-notice" class="place-right">電話號碼格式錯誤(全數字，10碼)</div>
                         </div>
 
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="city" id="city" placeholder="Your city of residence">
+                            <input onchange="isRequired(this, 'city-of-residence-notice', 'CITY')" type="text" class="form-control" name="city" id="city" placeholder="Your city of residence">
                             <label for="city">City of residence</label>
+                            <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                         </div>
 
-                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                        <button disabled id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                     </form>
                 </main>
