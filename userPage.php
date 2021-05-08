@@ -164,7 +164,23 @@
                                 EOT;
                             }
                             else {
-                                
+                                $shop_id = $stmt->fetch()['shop_id'];
+                                $stmt = $connection->prepare('select * from shops where shop_id = ' . $shop_id);
+                                $stmt->execute();
+                                $row = $stmt->fetch();
+
+                                echo '<h1>My Shop</h1>' . 
+                                     '<li> Shop Name: ' . $row['shop_name'] . '<br></li>' . 
+                                     '<li> City of Shop Location: ' . $row['city'] . '<br></li>' . 
+                                     "<li> Shop's Phone: " . $row['phone_number'] . '<br></li>' . 
+                                     '<form action="" method="post">' . 
+                                        'Per Mask Price: ' . '<input type="text" name="per_mask_price" placeholder= "' . $row['per_mask_price'] . '">' . 
+                                                             '<button type="submit">Edit</button><br>' . 
+                                     '</form>' .
+                                     '<form action="" method="post">' . 
+                                        'Mask Amount: ' . '<input type="text" name="stock_quantity" placeholder= "' . $row['stock_quantity'] . '">' . 
+                                                             '<button type="submit">Edit</button><br>' . 
+                                     '</form>';
                             }
                         }
                         catch(Exception $e) {

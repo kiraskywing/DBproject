@@ -94,11 +94,11 @@ try {
     $i = 0 + $listsPerPage * ($page - 1);
     for ($j = 0; $j < $showLists; $i++, $j++) {
         echo '<li> ' . '[' . $i . ']' . ' ' .
-             'Shop Name: ' . $_SESSION['shopNames'][$i] . '; ' .
-             'Shop City: ' . $_SESSION['shopCities'][$i] . '; ' .
-             'Per Mask Price: ' . $_SESSION['shopMaskPrices'][$i] . '; ' .
-             'Stock Quantity: ' . $_SESSION['shopStockQuantities'][$i] . '; ' .
-             'Phone Number: ' . $_SESSION['shopPhones'][$i] . '; ' .
+             'Shop Name: ' . $_SESSION['shopNames'][$i] . '; ' . '<br>' .
+             'Shop City: ' . $_SESSION['shopCities'][$i] . '; ' . '<br>' .
+             'Per Mask Price: ' . $_SESSION['shopMaskPrices'][$i] . '; ' . '<br>' .
+             'Stock Quantity: ' . $_SESSION['shopStockQuantities'][$i] . '; ' . '<br>' .
+             'Phone Number: ' . $_SESSION['shopPhones'][$i] . '; ' . '<br>' .
              '<br><br></li>';
     }
     echo '</ul>';
