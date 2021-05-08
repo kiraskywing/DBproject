@@ -245,6 +245,8 @@
                             </select>
                             <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                         </div>
+                        
+                        <button disabled id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                     </form>
                 </main>
