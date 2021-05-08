@@ -82,7 +82,6 @@
                     CONFIRM_PASSWORD: false,
                     FULL_NAME: false,
                     PHONE: false,
-                    CITY: false,
                 };
                 // utils.
                 function disableSubmitButton() {
@@ -104,14 +103,13 @@
                     document.getElementById('login-image').src = './login-fail.jpeg';
                 }
                 function confirmAllStatus() {
-                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE, CITY } = inputStatus;
+                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = inputStatus;
                     return (
                         ACCOUNT
                         && PASSWORD
                         && CONFIRM_PASSWORD
                         && FULL_NAME
                         && PHONE
-                        && CITY
                     );
                 }
                 // validate functions.
@@ -215,7 +213,7 @@
                         <div class="form-floating">
                             <input onchange="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
-                            <div id="password-notice" class="place-right">密碼為4~20碼，只能有英數</div>
+                            <div id="password-notice" class="place-right">Invalid format (only upper/lower-case character and number are allowed)</div>
                         </div>
 
                         <div class="form-floating">
@@ -233,16 +231,20 @@
                         <div class="form-floating">
                             <input onchange="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">電話號碼格式錯誤(全數字，10碼)</div>
+                            <div id="phone-notice" class="place-right">Invalid format (only 10 digits)</div>
                         </div>
 
                         <div class="form-floating">
-                            <input onchange="isRequired(this, 'city-of-residence-notice', 'CITY')" type="text" class="form-control" name="city" id="city" placeholder="Your city of residence">
-                            <label for="city">City of residence</label>
+                            City of Residence
+                            <select name="city">
+                                <?php
+                                    include "parameters.php";
+                                    foreach ($cities as $city)
+                                        echo "<option value=\"" . $city . "\">" . $city . "</option>";
+                                ?>
+                            </select>
                             <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                         </div>
-
-                        <button disabled id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                     </form>
                 </main>

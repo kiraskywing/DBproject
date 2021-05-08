@@ -1,6 +1,7 @@
 <?php
 session_start();
 $_SESSION['Authenticated']=false;
+include "db_connection.php";
 
 try {
     if (!isset($_POST['account']) || !isset($_POST['pwd']) || !isset($_POST['re_pwd']) 
@@ -27,7 +28,7 @@ try {
     $phone=$_POST['phone'];
     $city=$_POST['city'];
     
-    include "db_connection.php";
+    
     $stmt=$connection->prepare("select account from users where account=:acc");
     $stmt->execute(array('acc' => $acc));
 

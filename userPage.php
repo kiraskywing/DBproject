@@ -1,4 +1,12 @@
-<?php include "authentication.php"; ?>
+<?php 
+    include "authentication.php";
+    include "parameters.php";
+    if (isset($_SESSION['shopNames'])) unset($_SESSION['shopNames']);
+    if (isset($_SESSION['shopCities'])) unset($_SESSION['shopCities']);
+    if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);
+    if (isset($_SESSION['shopStockQuantities'])) unset($_SESSION['shopStockQuantities']);
+    if (isset($_SESSION['shopPhones'])) unset($_SESSION['shopPhones']); 
+?>
 
 <!DOCTYPE html>
 <html>
@@ -72,74 +80,110 @@
                     <h2>Profile</h2>
                     <?php
                         echo "Account: " . $_SESSION['account'] . "<br>" .
-                             "Full name: " . $_SESSION['full_name'] . "<br>" .
-                             "Phone number: " . $_SESSION['phone_number'] . "<br>" .
-                             "City of residence: " . $_SESSION['city'] . "<br>";
+                             "Full Name: " . $_SESSION['full_name'] . "<br>" .
+                             "Phone Number: " . $_SESSION['phone_number'] . "<br>" .
+                             "City of Residence: " . $_SESSION['city'] . "<br>";
                     ?>
 
                     <h2>Shop List</h2>
                     <form action="search_shop.php" method="post">
                         Shop: <input type="text" name="shop_name"><br>
-                        City: <input type="text" name="shop_city"><br>
+                        City: <select name="shop_city">
+                                <option value="">All</option>
+                                <?php
+                                    foreach ($cities as $city)
+                                        echo '<option value="' . $city . '">' . $city . '</option>';
+                                ?>
+                              </select><br>
                         Price: min<input type="text" name="min_price"><br> 
                                max<input type="text" name="max_price"><br>
-                        Amount: <input type="text" name="amount"><br>
+                        Amount: <select name="amount">
+                                    <option value="-1">All</option>
+                                    <?php
+                                        for ($i = 0; $i < count($amount); $i++)
+                                            echo '<option value="' . $i . '">' . $amount[$i] . '</option>';
+                                    ?>
+                                </select><br>
+                        Only show the shop I work at <input type="checkbox" value="1" name="isShopStaff">
                         <button class="login-button w-100 btn btn-lg btn-success" type="submit">Search</button>
                     </form>
                 </main>
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <form action="register_shop.php" method="post">
+                    
                     <?php 
                         try {
-                            $stmt = $connection->prepare("select * from shop_staff where is_master = true and staff_id =:id");
-                            $stmt->execute(array('id' => $_SESSION['user_id']));
+                            $stmt = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
+                            $stmt->execute();
                             
                             if ($stmt->rowCount() == 0) {
                                 echo<<<EOT
-                                <img src="./login.png" alt="" height="120" width="108">
-                                <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
-        
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
-                                    <label for="account">Shop Name</label>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" name="shop_city" id="shop_city" placeholder=" ">
-                                    <label for="password">Shop City</label>
-                                </div>
-        
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
-                                    <label for="re_password">Mask Price</label>
-                                </div>
-        
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
-                                    <label for="full_name">Mask Amount</label>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
-                                    <label for="phone">Shop's Phone Number</label>
-                                </div>
-        
-                                <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                <form action="register_shop.php" method="post">
+                                    <img src="./login.png" alt="" height="120" width="108">
+                                    <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
+            
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                        <label for="shop_name">Shop Name</label>
+                                    </div>
                                 EOT;
+                                
+                                echo<<<EOT
+                                    <div class="form-floating">
+                                        City of Shop Location
+                                        <select name="shop_city">
+                                    EOT;
+                                
+                                foreach ($cities as $city)
+                                    echo "<option value=\"" . $city . "\">" . $city . "</option>";
+                                
+                                echo<<<EOT
+                                        </select>
+                                    </div>
+                                EOT;
+                                
+                                echo<<<EOT
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
+                                        <label for="pre_mask_price">Mask Price</label>
+                                    </div>
+                                
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
+                                        <label for="stock_quantity">Mask Amount</label>
+                                    </div>
+                                    
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
+                                        <label for="shop_phone">Shop's Phone Number</label>
+                                    </div>
+            
+                                    <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                </form>
+                                EOT;
+                            }
+                            else {
+                                
                             }
                         }
                         catch(Exception $e) {
-                            $msg=$e->getMessage();
-                            session_unset(); 
-                            session_destroy(); 
-                            echo $e->getMessage();
+                            $msg = $e->getMessage();
+                            echo <<<EOT
+                                <!DOCTYPE html>
+                                <html>
+                                    <body>
+                                        <script>
+                                            alert("$msg");
+                                            window.location.replace("userPage.php");
+                                        </script>
+                                    </body>
+                                </html>
+                            EOT;
                         }
                     ?>
                         
-                        <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
-                    </form>
+                    <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
         </div>
