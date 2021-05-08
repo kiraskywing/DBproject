@@ -1,6 +1,11 @@
 <?php 
     include "authentication.php";
-    include "parameters.php"; 
+    include "parameters.php";
+    if (isset($_SESSION['shopNames'])) unset($_SESSION['shopNames']);
+    if (isset($_SESSION['shopCities'])) unset($_SESSION['shopCities']);
+    if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);
+    if (isset($_SESSION['shopStockQuantities'])) unset($_SESSION['shopStockQuantities']);
+    if (isset($_SESSION['shopPhones'])) unset($_SESSION['shopPhones']); 
 ?>
 
 <!DOCTYPE html>
@@ -109,8 +114,8 @@
                     
                     <?php 
                         try {
-                            $stmt = $connection->prepare("select * from shop_staffs where isMaster = true and staff_id =:id");
-                            $stmt->execute(array('id' => $_SESSION['user_id']));
+                            $stmt = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
+                            $stmt->execute();
                             
                             if ($stmt->rowCount() == 0) {
                                 echo<<<EOT
@@ -157,6 +162,9 @@
                                     <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                                 </form>
                                 EOT;
+                            }
+                            else {
+                                
                             }
                         }
                         catch(Exception $e) {
