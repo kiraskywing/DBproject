@@ -97,6 +97,12 @@
                 function hideNotice(idName) {
                     document.getElementById(idName).classList.remove('show');
                 }
+                function replaceToNormalImg() {
+                    document.getElementById('login-image').src = './login.png';
+                }
+                function replaceToFailImg() {
+                    document.getElementById('login-image').src = './login-fail.jpeg';
+                }
                 function confirmAllStatus() {
                     const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE, CITY } = inputStatus;
                     return (
@@ -113,10 +119,12 @@
                     if (element.value.length === 0) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
+                        replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -125,22 +133,25 @@
                     if (!passwordTester.test(element.value)) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
+                        replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
                 function doubleCheckPassword(element, inputStatusKey) {
-                    console.log(document.getElementsByClassName('pwd')[0].value);
                     if (element.value !== document.getElementsByClassName('pwd')[0].value) {
                         showNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = false;
+                        replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = true;
+                        replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -149,10 +160,12 @@
                     if (nonNumberTester.test(element.value) || element.value.length !== 10) {
                         showNotice('phone-notice');
                         inputStatus[inputStatusKey] = false;
+                        replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('phone-notice');
                         inputStatus[inputStatusKey] = true;
+                        replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -190,7 +203,7 @@
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
                     <form action="register.php" method="post">
-                        <img src="./login.png" alt="" height="120" width="108">
+                        <img id="login-image" src="./login.png" alt="" height="120" width="108">
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
