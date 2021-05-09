@@ -239,31 +239,31 @@
                         <div class="form-floating">
                             <input onchange="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT')" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
-                            <div id="account-notice" class="place-right">帳號為4~20碼，只能有英數</div>
+                            <div id="account-notice" class="place-right">*Invalid format</div>
                         </div>
                         
                         <div class="form-floating">
                             <input onchange="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
-                            <div id="password-notice" class="place-right">Invalid format (only upper/lower-case character and number are allowed)</div>
+                            <div id="password-notice" class="place-right">*Invalid format</div>
                         </div>
 
                         <div class="form-floating">
                             <input onchange="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
                             <label for="re_password">Confirm Password</label>
-                            <div id="confirm-password-notice" class="place-right">確認密碼與原本不同</div>
+                            <div id="confirm-password-notice" class="place-right">*Comfirmed password mismatch!</div>
                         </div>
 
                         <div class="form-floating">
                             <input onchange="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
                             <label for="full_name">Full Name</label>
-                            <div id="full-name-notice" class="place-right">Full Name 不能為空</div>
+                            <div id="full-name-notice" class="place-right">*Input required!</div>
                         </div>
                         
                         <div class="form-floating">
                             <input onchange="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">Invalid format (only 10 digits)</div>
+                            <div id="phone-notice" class="place-right">*Invalid format (should be exactly 10 digits)</div>
                         </div>
 
                         <div class="form-floating">

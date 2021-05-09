@@ -131,7 +131,7 @@
                                 
                                 echo<<<EOT
                                     <div class="form-floating">
-                                        City of Shop Location
+                                        Shop Location
                                         <select name="shop_city">
                                     EOT;
                                 
@@ -175,7 +175,7 @@
                                 echo<<<EOT
                                     <h1>My Shop</h1>
                                     <li> Shop Name: $shop_name</li>
-                                    <li> City of Shop Location: $shop_city</li> 
+                                    <li> Shop Location: $shop_city</li> 
                                     <li> Shop's Phone: $shop_phone</li> 
                                     <form action="updateShop.php" method="post">
                                         Per Mask Price: <input type="text" name="per_mask_price" placeholder="$per_mask_price"> 
