@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： localhost
--- 產生時間： 2021 年 05 月 07 日 13:14
+-- 產生時間： 2021 年 05 月 09 日 02:30
 -- 伺服器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.2
 
@@ -58,7 +58,13 @@ CREATE TABLE `shops` (
 
 INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_quantity`, `phone_number`) VALUES
 (3, 'Shop AA', 'Taipei City', 50, 5, '0963714803'),
-(4, 'BB shop', 'Taichung City', 500, 1000, '0917466219');
+(4, 'BB shop', 'Taichung City', 500, 1000, '0917466219'),
+(5, 'Best Care Pharmacy', 'Keelung City', 242, 613, '0916299311'),
+(6, '278 Pharmacy', 'Pingtung City', 36, 406, '0910555488'),
+(7, 'Duane Reade', 'Hsinchu County', 81, 105, '0958047416'),
+(8, '90th Street Pharmacy', 'New Taipei City', 190, 707, '0910113504'),
+(9, 'Avalon Chemists', 'Changhua City', 8, 76, '0931115201'),
+(10, 'Ivan Pharmacy', 'Taitung City', 128, 637, '0931896813');
 
 -- --------------------------------------------------------
 
@@ -78,7 +84,13 @@ CREATE TABLE `shop_staffs` (
 
 INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (1, 3, 1),
-(2, 4, 1);
+(2, 4, 1),
+(3, 7, 1),
+(4, 5, 1),
+(5, 6, 1),
+(6, 8, 1),
+(7, 9, 1),
+(8, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -103,7 +115,12 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `account`, `password`, `salt`, `phone_number`, `full_name`, `city`) VALUES
 (1, 'user1', 'f4b933a187a223484bcb239d4645009c28024f88a6de6b0e8c921d2f5207c7ba', '5047', '0913177386', 'TA_1', 'New Taipei City'),
 (2, 'user2', '0cb9f6ec29a356565623e7138aaa4e24ff15517df64b3d447f077db0b99682de', '3900', '0971669290', 'TA_2', 'Taichung City'),
-(3, 'kiraskywing', '12085e5457f07cf010535edf1e7fa4a8720a71bf390152ff79e786b92fd569f7', '4929', '0988363795', 'Yi-Chang Lin', 'Hsinchu City');
+(3, 'kiraskywing', '12085e5457f07cf010535edf1e7fa4a8720a71bf390152ff79e786b92fd569f7', '4929', '0988363795', 'Yi-Chang Lin', 'Hsinchu City'),
+(4, 'stardustngc1569', '216e965c5f0582a9a761997f3803bd5b1b09b4ebc5dab008204bbee880ca287f', '5275', '0958714248', 'Orpha Brittain', 'Hualien City'),
+(5, 'notespioneer10', 'd407aa903c614b225b1db227a0b7786b5804e2a57e59b6d1ced296e6f7c85fbe', '7085', '0963021203', 'Lilibeth Darbinian', 'Yilan County'),
+(6, 'redflowerice', 'cd1a043dc68d9cdcaf71c37ec28ca090f275395efa968d85a01749c9b8e9a115', '6772', '0989917122', 'Kassidy Tod', 'Chiayi City'),
+(7, 'kumquatngc1569', 'fc8402d7a5cb5b5a058ac340db4b6e479cedae9cb228ad0f2aadc36f0ae2321c', '3463', '0912540927', 'Harriette Traves', 'Kaohsiung City'),
+(8, 'hockeyngc5195', 'f650534a6627577e51a2ab0c0b8f1652a37917ce49e19a5e6e475ba2be86a3fb', '5254', '0926035020', 'Kenya Ware', 'Matsu');
 
 --
 -- 已傾印資料表的索引
@@ -142,13 +159,13 @@ ALTER TABLE `users`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `shops`
 --
 ALTER TABLE `shops`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- 已傾印資料表的限制式
