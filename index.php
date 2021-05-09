@@ -83,6 +83,13 @@
                     FULL_NAME: false,
                     PHONE: false,
                 };
+                const displayImageState = {
+                    ACCOUNT: true,
+                    PASSWORD: true,
+                    CONFIRM_PASSWORD: true,
+                    FULL_NAME: true,
+                    PHONE: true,
+                }
                 // utils.
                 function disableSubmitButton() {
                     document.getElementById('submit-button').disabled = true;
@@ -112,17 +119,29 @@
                         && PHONE
                     );
                 }
+                function confirmDisplayImageStatus() {
+                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = displayImageState;
+                    return (
+                        ACCOUNT
+                        && PASSWORD
+                        && CONFIRM_PASSWORD
+                        && FULL_NAME
+                        && PHONE
+                    );
+                }
                 // validate functions.
                 function isRequired(element, noticeElementId, inputStatusKey) {
                     if (element.value.length === 0) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -131,12 +150,14 @@
                     if (!passwordTester.test(element.value)) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -144,12 +165,14 @@
                     if (element.value !== document.getElementsByClassName('pwd')[0].value) {
                         showNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -158,12 +181,14 @@
                     if (nonNumberTester.test(element.value) || element.value.length !== 10) {
                         showNotice('phone-notice');
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('phone-notice');
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
