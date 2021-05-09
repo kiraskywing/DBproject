@@ -35,9 +35,9 @@ try {
             if ($amount == 0)
                 $sql_stmt .= 'and stock_quantity = 0';
             else if ($amount == 1)
-                $sql_stmt .= 'and (stock_quantity between 1 and 99)';
+                $sql_stmt .= 'and (stock_quantity between 1 and 499)';
             else if ($amount == 2)
-                $sql_stmt .= 'and stock_quantity >= 100';
+                $sql_stmt .= 'and stock_quantity >= 500';
             
             if ($isShopStaff == 1)
                 $sql_stmt .= 'and (shop_id in (select shop_id from shop_staffs where staff_id = ' . $_SESSION['user_id'] . '))';
@@ -77,13 +77,13 @@ try {
     EOT;
     
     if ($page > 1)
-        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page - 1 . '\'">Last</button>';
+        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page - 1 . '\'">Last</button> ';
     for ($i = 1; $i <= $_SESSION['totalPages']; $i++)
     {
         if ($i == $page)
             echo "$i ";
         else
-            echo "<a href='searchShop.php?page=$i'>$i</a>";
+            echo "<a href='searchShop.php?page=$i'>$i</a> ";
     }
     if ($page < $_SESSION['totalPages'])
         echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page + 1 . '\'">Next</button><br>';
@@ -95,7 +95,7 @@ try {
     for ($j = 0; $j < $showLists; $i++, $j++) {
         echo '<li> ' . '[' . $i + 1 . ']' . ' ' .
              'Shop Name: ' . $_SESSION['shopNames'][$i] . '; ' . '<br>' .
-             'Shop City: ' . $_SESSION['shopCities'][$i] . '; ' . '<br>' .
+             'Shop Location: ' . $_SESSION['shopCities'][$i] . '; ' . '<br>' .
              'Per Mask Price: ' . $_SESSION['shopMaskPrices'][$i] . '; ' . '<br>' .
              'Stock Quantity: ' . $_SESSION['shopStockQuantities'][$i] . '; ' . '<br>' .
              'Phone Number: ' . $_SESSION['shopPhones'][$i] . '; ' . '<br>' .

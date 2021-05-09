@@ -7,5 +7,5 @@ $cities = array("Keelung City", "New Taipei City", "Taipei City", "Taoyuan City"
                 "Taitung County", "Penghu County", "Green Island", "Orchid Island", "Kinmen County",
                 "Matsu", "Lienchiang County");
 
-$amount = array("(售完) 0", "(稀少) 1 ~ 99", "(充足) 100+");
+$amount = array("(售完) 0", "(稀少) 1 ~ 499", "(充足) 500+");
 ?>
