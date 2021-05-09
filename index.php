@@ -71,6 +71,14 @@
             .show {
                 display: block;
             }
+            .select-label {
+                position: absolute;
+                top: 10px;
+                left: 12px;
+                font-size: 12px;
+                color: #212529;
+                opacity: 0.65;
+            }
         </style>
     </head>
     <body class="text-center">
@@ -260,8 +268,8 @@
                         </div>
 
                         <div class="form-floating">
-                            City of Residence
-                            <select name="city">
+                            <div class="select-label">City of Residence</div>
+                            <select class="form-select" name="city">
                                 <?php
                                     include "parameters.php";
                                     foreach ($cities as $city)
