@@ -10,8 +10,7 @@
 
             <script>
                 function handleSubmit(element, type) {
-                    console.log('handle sort', element, type);
-                    document.getElementById("submit-form").submit(); 
+                    document.getElementById(type).click(); 
                 }
             </script>
         </head>
@@ -88,10 +87,6 @@
         else
             $page = 1;
 
-        // echo <<<EOT
-
-        // EOT;
-        echo '<form id="submit-form" action="" method="post"></form>';
         // pagination
         echo '<nav style="margin-top: 50px"aria-label="123"><ul class="pagination">';
 
@@ -120,16 +115,50 @@
         echo '</ul></nav>';
         $showLists = min($_SESSION['totalLists'] - $listsPerPage * ($page - 1), $listsPerPage);
 
+        // sort
+        if (!isset($_SESSION['order']))
+            $_SESSION['order'] = array_keys($_SESSION['shopNames']);
+
         echo<<<EOT
             <div class="card profile">
                 <table style="width: 100%" class="table">
                     <thead>
                         <tr>
-                            <th scope="col" onclick="handleSubmit(this, 'shopNames')">Shop Name</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopCities')">Shop Location</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopMaskPrices')">Per Mask Price</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopStockQuantities')">Stock Quantity</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopPhones')">Phone Number</th>
+                            <th scope="col" onclick="handleSubmit(this, 'shop-name-trigger')">
+                                Shop Name
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">
+                                    <button id="shop-name-trigger" style="display: none;" type="submit" name="shopName" value="1">Shop Name</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'shop-city-trigger')">
+                                Shop Location
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">
+                                    <button id="shop-city-trigger" style="display: none;" type="submit" name="shopCity" value="1">Shop Location</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'mask-price-trigger')">
+                                Per Mask Price
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="mask-price-trigger" style="display: none;" type="submit" name="maskPrice" value="1">Per Mask Price</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'mask-amount-trigger')">
+                                Stock Quantity
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="mask-amount-trigger" style="display: none;" type="submit" name="maskAmount" value="1">Stock Quantity</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'shop-phone-trigger')">
+                                Phone Number
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="shop-phone-trigger" style="display: none;" type="submit" name="shopPhone" value="1">Phone Number</button>
+                                </form>
+                            </th>
                         </tr>
                     </thead>
             EOT;
@@ -141,11 +170,11 @@
                     <tr class="$className">
             EOT;
 
-            echo '<th scope="row">' . $_SESSION['shopNames'][$i] . '</th>' .
-                 '<td>' . $_SESSION['shopCities'][$i]  . '</td>' .
-                 '<td>' . $_SESSION['shopMaskPrices'][$i] . '</td>' .
-                 '<td>' . $_SESSION['shopStockQuantities'][$i] . '</td>' .
-                 '<td>' . $_SESSION['shopPhones'][$i] . '</td>' ;
+            echo '<th scope="row">' . $_SESSION['shopNames'][$_SESSION['order'][$i]] . '</th>' .
+                '<td>' . $_SESSION['shopCities'][$_SESSION['order'][$i]]  . '</td>' .
+                '<td>' . $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]] . '</td>' .
+                '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
+                '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>' ;
 
             echo<<<EOT
                     </tr>
@@ -158,7 +187,6 @@
             <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back</button>
         EOT;
     }
-
 
     catch(exception $e) {
         $msg=$e->getMessage();
