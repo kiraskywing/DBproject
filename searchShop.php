@@ -73,37 +73,84 @@ try {
     echo <<<EOT
         <!DOCTYPE html>
             <html>
-            <body>
+                <head>
+                    
+                    <!-- CSS only -->
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+                    <!-- JavaScript Bundle with Popper -->
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+ 
+                </head>
+                <body>
     EOT;
-    
-    if ($page > 1)
-        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page - 1 . '\'">Last</button> ';
+    // pagination
+    echo '<nav style="margin-top: 50px"aria-label="123"><ul class="pagination">';
+
+    // prev
+    if ($page <= 1)
+        echo '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>';
+    else
+        echo '<li class="page-item"> <a class="page-link" href=\'searchShop.php?page=' . $page - 1 . '\'" tabindex="-1" aria-disabled="true">Previous</a></li>';
+
+    // item
     for ($i = 1; $i <= $_SESSION['totalPages']; $i++)
     {
-        if ($i == $page)
-            echo "$i ";
-        else
-            echo "<a href='searchShop.php?page=$i'>$i</a> ";
+        if ($i == $page) {
+            echo "<li class='page-item active'><a class='page-link'>$i</a></li>";
+        } else {
+            echo "<li class='page-item'><a class='page-link' href='searchShop.php?page=$i'>$i</a></li> ";
+        }   
     }
-    if ($page < $_SESSION['totalPages'])
-        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page + 1 . '\'">Next</button><br>';
 
+    // next
+    if ($page < $_SESSION['totalPages'])
+        echo '<li class="page-item"><a class="page-link" href=\'searchShop.php?page=' . $page + 1 . '\'">Next</a></li>';
+    else
+        echo '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
+
+    echo '</ul></nav>';
     $showLists = min($_SESSION['totalLists'] - $listsPerPage * ($page - 1), $listsPerPage);
 
-    echo '<ul>';
+    echo<<<EOT
+        <div class="card profile">
+            <table style="width: 100%" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Shop Name</th>
+                        <th scope="col">Shop Location</th>
+                        <th scope="col">Per Mask Price</th>
+                        <th scope="col">Stock Quantity</th>
+                        <th scope="col">Phone Number</th>
+                    </tr>
+                </thead>
+        EOT;
     $i = 0 + $listsPerPage * ($page - 1);
     for ($j = 0; $j < $showLists; $i++, $j++) {
-        echo '<li> ' . '[' . $i + 1 . ']' . ' ' .
-             'Shop Name: ' . $_SESSION['shopNames'][$i] . '; ' . '<br>' .
-             'Shop Location: ' . $_SESSION['shopCities'][$i] . '; ' . '<br>' .
-             'Per Mask Price: ' . $_SESSION['shopMaskPrices'][$i] . '; ' . '<br>' .
-             'Stock Quantity: ' . $_SESSION['shopStockQuantities'][$i] . '; ' . '<br>' .
-             'Phone Number: ' . $_SESSION['shopPhones'][$i] . '; ' . '<br>' .
-             '<br><br></li>';
+        $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
+        echo<<<EOT
+            <tbody>
+                <tr class="$className">
+        EOT;
+
+        echo '<th scope="row">' . $_SESSION['shopNames'][$i] . '</th>' .
+             '<td>' . $_SESSION['shopCities'][$i]  . '</td>' .
+             '<td>' . $_SESSION['shopMaskPrices'][$i] . '</td>' .
+             '<td>' . $_SESSION['shopStockQuantities'][$i] . '</td>' .
+             '<td>' . $_SESSION['shopPhones'][$i] . '</td>' ;
+
+        echo<<<EOT
+                </tr>
+            </tbody>
+        EOT;
     }
-    echo '</ul>';
-    echo '<button type="button" onClick="location.href=' . '\'userPage.php\'"' . '>Back</button>';
-    echo '</body></html>';
+    echo<<<EOT
+                    </table>
+                </div>
+                <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back</button>
+            </body>
+        </html>
+    EOT;
 }
 
 
