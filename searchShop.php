@@ -87,10 +87,6 @@
         else
             $page = 1;
 
-        // echo <<<EOT
-
-        // EOT;
-        echo '<form id="submit-form" action="" method="post"></form>';
         // pagination
         echo '<nav style="margin-top: 50px"aria-label="123"><ul class="pagination">';
 
@@ -121,7 +117,7 @@
 
         // sort
         if (!isset($_SESSION['order']))
-    $_SESSION['order'] = array_keys($_SESSION['shopNames']);
+            $_SESSION['order'] = array_keys($_SESSION['shopNames']);
 
         echo<<<EOT
             <div class="card profile">
@@ -131,18 +127,38 @@
                             <th scope="col" onclick="handleSubmit(this, 'shop-name-trigger')">
                                 Shop Name
                                 <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">
                                     <button id="shop-name-trigger" style="display: none;" type="submit" name="shopName" value="1">Shop Name</button>
                                 </form>
                             </th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopCities')">
+                            <th scope="col" onclick="handleSubmit(this, 'shop-city-trigger')">
                                 Shop Location
                                 <form action="sortResult.php" method="post">
-                                    <button id="shop-name-trigger" style="display: none;" type="submit" name="shopName" value="1">Shop Name</button>
+                                    <input type="hidden" name="page" value="$page">
+                                    <button id="shop-city-trigger" style="display: none;" type="submit" name="shopCity" value="1">Shop Location</button>
                                 </form>
                             </th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopMaskPrices')">Per Mask Price</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopStockQuantities')">Stock Quantity</th>
-                            <th scope="col" onclick="handleSubmit(this, 'shopPhones')">Phone Number</th>
+                            <th scope="col" onclick="handleSubmit(this, 'mask-price-trigger')">
+                                Per Mask Price
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="mask-price-trigger" style="display: none;" type="submit" name="maskPrice" value="1">Per Mask Price</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'mask-amount-trigger')">
+                                Stock Quantity
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="mask-amount-trigger" style="display: none;" type="submit" name="maskAmount" value="1">Stock Quantity</button>
+                                </form>
+                            </th>
+                            <th scope="col" onclick="handleSubmit(this, 'shop-phone-trigger')">
+                                Phone Number
+                                <form action="sortResult.php" method="post">
+                                    <input type="hidden" name="page" value="$page">    
+                                    <button id="shop-phone-trigger" style="display: none;" type="submit" name="shopPhone" value="1">Phone Number</button>
+                                </form>
+                            </th>
                         </tr>
                     </thead>
             EOT;
