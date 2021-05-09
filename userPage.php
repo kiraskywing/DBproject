@@ -284,7 +284,7 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Shop Name</th>
-                                                    <th scope="col">City of Shop Location</th>
+                                                    <th scope="col">Shop Location</th>
                                                     <th scope="col">Shop's Phone</th>
                                                 </tr>
                                             </thead>
