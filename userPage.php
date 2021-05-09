@@ -70,7 +70,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" 
-                            onClick="alert('Logout success'); window.location.replace('index.php');">Logout
+                            onClick="alert('Logout Success!'); window.location.replace('index.php');">Logout
                     </button>
                 </li>
             </ul>
@@ -86,7 +86,7 @@
                     ?>
 
                     <h2>Shop List</h2>
-                    <form action="search_shop.php" method="post">
+                    <form action="searchShop.php" method="post">
                         Shop: <input type="text" name="shop_name"><br>
                         City: <select name="shop_city">
                                 <option value="">All</option>
@@ -107,19 +107,19 @@
                         Only show the shop I work at <input type="checkbox" value="1" name="isShopStaff">
                         <button class="login-button w-100 btn btn-lg btn-success" type="submit">Search</button>
                     </form>
+                    <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    
                     <?php 
                         try {
-                            $stmt = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
-                            $stmt->execute();
+                            $query = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
+                            $query->execute();
                             
-                            if ($stmt->rowCount() == 0) {
+                            if ($query->rowCount() == 0) {
                                 echo<<<EOT
-                                <form action="register_shop.php" method="post">
+                                <form action="registerShop.php" method="post">
                                     <img src="./login.png" alt="" height="120" width="108">
                                     <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
             
@@ -164,23 +164,63 @@
                                 EOT;
                             }
                             else {
-                                $shop_id = $stmt->fetch()['shop_id'];
-                                $stmt = $connection->prepare('select * from shops where shop_id = ' . $shop_id);
-                                $stmt->execute();
-                                $row = $stmt->fetch();
-
-                                echo '<h1>My Shop</h1>' . 
-                                     '<li> Shop Name: ' . $row['shop_name'] . '<br></li>' . 
-                                     '<li> City of Shop Location: ' . $row['city'] . '<br></li>' . 
-                                     "<li> Shop's Phone: " . $row['phone_number'] . '<br></li>' . 
-                                     '<form action="" method="post">' . 
-                                        'Per Mask Price: ' . '<input type="text" name="per_mask_price" placeholder= "' . $row['per_mask_price'] . '">' . 
-                                                             '<button type="submit">Edit</button><br>' . 
-                                     '</form>' .
-                                     '<form action="" method="post">' . 
-                                        'Mask Amount: ' . '<input type="text" name="stock_quantity" placeholder= "' . $row['stock_quantity'] . '">' . 
-                                                             '<button type="submit">Edit</button><br>' . 
-                                     '</form>';
+                                $shop_id = $query->fetch()['shop_id'];
+                                $query = $connection->prepare('select * from shops where shop_id = ' . $shop_id);
+                                $query->execute();
+                                
+                                $row = $query->fetch();
+                                $shop_name = $row['shop_name']; $shop_city = $row['city']; $shop_phone = $row['phone_number'];
+                                $per_mask_price = $row['per_mask_price']; $stock_quantity = $row['stock_quantity'];
+                                
+                                echo<<<EOT
+                                    <h1>My Shop</h1>
+                                    <li> Shop Name: $shop_name</li>
+                                    <li> City of Shop Location: $shop_city</li> 
+                                    <li> Shop's Phone: $shop_phone</li> 
+                                    <form action="updateShop.php" method="post">
+                                        Per Mask Price: <input type="text" name="per_mask_price" placeholder="$per_mask_price"> 
+                                                        <input type="hidden" name="shop_id" value="$shop_id">
+                                                        <button type="submit">Edit</button><br>
+                                    </form>
+                                    <form action="updateShop.php" method="post">
+                                        Mask Amount: <input type="text" name="stock_quantity" placeholder="$stock_quantity"> 
+                                                     <input type="hidden" name="shop_id" value="$shop_id">
+                                                     <button type="submit">Edit</button><br>
+                                    </form>
+                                    EOT;
+                                
+                                $query = $connection->prepare("select A.staff_id, B.account, B.phone_number, B.full_name, B.city
+                                                               from shop_staffs A join users B on A.staff_id = B.user_id 
+                                                               where A.shop_id = " . $shop_id . " and isMaster = false");
+                                $query->execute();
+                                
+                                echo<<<EOT
+                                    <h1>Employee</h1>
+                                    <form action="updateShop.php" method="post"> 
+                                        Type account: <input type="text" name="staff_userName" placeholer="Type account">
+                                        <input type="hidden" name="shop_id" value="$shop_id">
+                                        <button type="submit">Add</button><br>
+                                    </form>
+                                    EOT;
+                                
+                                    $i = 0;
+                                while ($row = $query->fetch()) {
+                                    $j = $i + 1;
+                                    $staff_id = $row[0];
+                                    $staff_userName = $row[1]; $staff_phone = $row[2]; 
+                                    $staff_fullName = $row[3]; $staff_city = $row[4];
+                                    echo<<<EOT
+                                        <form action="updateShop.php" method="post">
+                                            <li>
+                                                [$j] Account: $staff_userName<br>
+                                                Full Name: $staff_fullName<br>
+                                                Phone: $staff_phone<br>
+                                                <button type="submit" name="staff_id" value="$staff_id">Delete</button><br>
+                                            </li>
+                                        </form>
+                                        EOT;
+                                    $i++;
+                                }
                             }
                         }
                         catch(Exception $e) {

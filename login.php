@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 $_SESSION['Authenticated'] = false;
 include "db_connection.php";
 
@@ -14,15 +13,15 @@ try
     if (empty($_POST['account']) || empty($_POST['pwd']))
         throw new Exception('Login Failed!');
 
-    $acc=$_POST['account'];
-    $pwd=$_POST['pwd'];
-    $stmt=$connection->prepare("select * from users where account=:acc");
-    $stmt->execute(array('acc' => $acc));
+    $acc = $_POST['account'];
+    $pwd = $_POST['pwd'];
+    $query = $connection->prepare("select * from users where account = :acc");
+    $query->execute(array('acc' => $acc));
 
-    if ($stmt->rowCount() == 1)
+    if ($query->rowCount() == 1)
     {
-        $row = $stmt->fetch();
-        if ($row['password'] == hash('sha256', $row['salt'].$_POST['pwd']))
+        $row = $query->fetch();
+        if ($row['password'] == hash('sha256', $row['salt'] . $_POST['pwd']))
         {
             $_SESSION['Authenticated'] = true;
             $_SESSION['user_id'] = $row['user_id'];
@@ -30,12 +29,13 @@ try
             $_SESSION['phone_number'] = $row['phone_number'];
             $_SESSION['full_name'] = $row['full_name'];
             $_SESSION['city'] = $row['city'];
+
             echo <<<EOT
                 <!DOCTYPE html>
                 <html>
                     <body>
                         <script>
-                            alert("Login Success! Redirect the page");
+                            alert("Login Success!");
                             window.location.replace("userPage.php");
                         </script>
                     </body>

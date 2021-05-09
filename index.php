@@ -1,10 +1,9 @@
 <?php
-    session_start();
-    # remove all session variables
-    session_unset(); 
-    # destroy the session
-    session_destroy();
+    session_start(); 
+    session_unset();   # remove all session variables
+    session_destroy(); # destroy the session
     $_SESSION['Authenticated']=false;
+    include "parameters.php";
 ?>
 
 <!DOCTYPE html>
@@ -71,6 +70,14 @@
             .show {
                 display: block;
             }
+            .select-label {
+                position: absolute;
+                top: 10px;
+                left: 12px;
+                font-size: 12px;
+                color: #212529;
+                opacity: 0.65;
+            }
         </style>
     </head>
     <body class="text-center">
@@ -83,6 +90,13 @@
                     FULL_NAME: false,
                     PHONE: false,
                 };
+                const displayImageState = {
+                    ACCOUNT: true,
+                    PASSWORD: true,
+                    CONFIRM_PASSWORD: true,
+                    FULL_NAME: true,
+                    PHONE: true,
+                }
                 // utils.
                 function disableSubmitButton() {
                     document.getElementById('submit-button').disabled = true;
@@ -112,17 +126,29 @@
                         && PHONE
                     );
                 }
+                function confirmDisplayImageStatus() {
+                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = displayImageState;
+                    return (
+                        ACCOUNT
+                        && PASSWORD
+                        && CONFIRM_PASSWORD
+                        && FULL_NAME
+                        && PHONE
+                    );
+                }
                 // validate functions.
                 function isRequired(element, noticeElementId, inputStatusKey) {
                     if (element.value.length === 0) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -131,12 +157,14 @@
                     if (!passwordTester.test(element.value)) {
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice(noticeElementId);
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -144,12 +172,14 @@
                     if (element.value !== document.getElementsByClassName('pwd')[0].value) {
                         showNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -158,12 +188,14 @@
                     if (nonNumberTester.test(element.value) || element.value.length !== 10) {
                         showNotice('phone-notice');
                         inputStatus[inputStatusKey] = false;
+                        displayImageState[inputStatusKey] = false;
                         replaceToFailImg();
                         disableSubmitButton();
                     } else {
                         hideNotice('phone-notice');
                         inputStatus[inputStatusKey] = true;
-                        replaceToNormalImg();
+                        displayImageState[inputStatusKey] = true;
+                        if (confirmDisplayImageStatus()) replaceToNormalImg();
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
@@ -200,7 +232,7 @@
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <form action="register.php" method="post">
+                    <form action="registerUser.php" method="post">
                         <img id="login-image" src="./login.png" alt="" height="120" width="108">
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
@@ -235,10 +267,9 @@
                         </div>
 
                         <div class="form-floating">
-                            City of Residence
-                            <select name="city">
+                            <div class="select-label">City of Residence</div>
+                            <select class="form-select" name="city">
                                 <?php
-                                    include "parameters.php";
                                     foreach ($cities as $city)
                                         echo "<option value=\"" . $city . "\">" . $city . "</option>";
                                 ?>
