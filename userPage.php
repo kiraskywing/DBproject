@@ -6,6 +6,8 @@
     if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);
     if (isset($_SESSION['shopStockQuantities'])) unset($_SESSION['shopStockQuantities']);
     if (isset($_SESSION['shopPhones'])) unset($_SESSION['shopPhones']); 
+    if (isset($_SESSION['order'])) unset($_SESSION['order']);
+    if (isset($_SESSION['sortShopName'])) unset($_SESSION['sortShopName']);
 ?>
 
 <!DOCTYPE html>

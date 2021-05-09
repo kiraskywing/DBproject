@@ -112,12 +112,20 @@ try {
     echo '</ul></nav>';
     $showLists = min($_SESSION['totalLists'] - $listsPerPage * ($page - 1), $listsPerPage);
 
+    // sort
+    if (!isset($_SESSION['order']))
+        $_SESSION['order'] = array_keys($_SESSION['shopNames']);
+
     echo<<<EOT
         <div class="card profile">
             <table style="width: 100%" class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Shop Name</th>
+                        <th scope="col">
+                            <form action="sortResult.php" method="post">
+                                <button type="submit" name="shopName" value="1">Shop Name</button>
+                            </form>
+                        </th>
                         <th scope="col">Shop Location</th>
                         <th scope="col">Per Mask Price</th>
                         <th scope="col">Stock Quantity</th>
@@ -133,11 +141,11 @@ try {
                 <tr class="$className">
         EOT;
 
-        echo '<th scope="row">' . $_SESSION['shopNames'][$i] . '</th>' .
-             '<td>' . $_SESSION['shopCities'][$i]  . '</td>' .
-             '<td>' . $_SESSION['shopMaskPrices'][$i] . '</td>' .
-             '<td>' . $_SESSION['shopStockQuantities'][$i] . '</td>' .
-             '<td>' . $_SESSION['shopPhones'][$i] . '</td>' ;
+        echo '<th scope="row">' . $_SESSION['shopNames'][$_SESSION['order'][$i]] . '</th>' .
+             '<td>' . $_SESSION['shopCities'][$_SESSION['order'][$i]]  . '</td>' .
+             '<td>' . $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]] . '</td>' .
+             '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
+             '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>' ;
 
         echo<<<EOT
                 </tr>
