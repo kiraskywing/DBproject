@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： localhost
+<<<<<<< HEAD
+-- 產生時間： 2021 年 05 月 09 日 02:30
+=======
 -- 產生時間： 2021 年 05 月 09 日 08:34
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 -- 伺服器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.2
 
@@ -57,16 +61,24 @@ CREATE TABLE `shops` (
 --
 
 INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_quantity`, `phone_number`) VALUES
+<<<<<<< HEAD
+(3, 'Shop AA', 'Taipei City', 50, 5, '0963714803'),
+=======
 (3, 'Shop AA', 'Taipei City', 50, 10, '0963714803'),
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 (4, 'BB shop', 'Taichung City', 500, 1000, '0917466219'),
 (5, 'Best Care Pharmacy', 'Keelung City', 242, 613, '0916299311'),
 (6, '278 Pharmacy', 'Pingtung City', 36, 406, '0910555488'),
 (7, 'Duane Reade', 'Hsinchu County', 81, 105, '0958047416'),
 (8, '90th Street Pharmacy', 'New Taipei City', 190, 707, '0910113504'),
 (9, 'Avalon Chemists', 'Changhua City', 8, 76, '0931115201'),
+<<<<<<< HEAD
+(10, 'Ivan Pharmacy', 'Taitung City', 128, 637, '0931896813');
+=======
 (10, 'Ivan Pharmacy', 'Taitung City', 128, 637, '0931896813'),
 (11, '94NiceShop', 'Hsinchu City', 5, 300, '0927734881'),
 (12, 'Perfect drug store 87', 'Nantou City', 15, 100, '0915466824');
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 
 -- --------------------------------------------------------
 
@@ -86,6 +98,15 @@ CREATE TABLE `shop_staffs` (
 
 INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (1, 3, 1),
+<<<<<<< HEAD
+(2, 4, 1),
+(3, 7, 1),
+(4, 5, 1),
+(5, 6, 1),
+(6, 8, 1),
+(7, 9, 1),
+(8, 10, 1);
+=======
 (2, 3, 0),
 (2, 4, 1),
 (3, 3, 0),
@@ -99,6 +120,7 @@ INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (8, 10, 1),
 (9, 12, 1),
 (10, 11, 1);
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 
 -- --------------------------------------------------------
 
@@ -128,9 +150,13 @@ INSERT INTO `users` (`user_id`, `account`, `password`, `salt`, `phone_number`, `
 (5, 'notespioneer10', 'd407aa903c614b225b1db227a0b7786b5804e2a57e59b6d1ced296e6f7c85fbe', '7085', '0963021203', 'Lilibeth Darbinian', 'Yilan County'),
 (6, 'redflowerice', 'cd1a043dc68d9cdcaf71c37ec28ca090f275395efa968d85a01749c9b8e9a115', '6772', '0989917122', 'Kassidy Tod', 'Chiayi City'),
 (7, 'kumquatngc1569', 'fc8402d7a5cb5b5a058ac340db4b6e479cedae9cb228ad0f2aadc36f0ae2321c', '3463', '0912540927', 'Harriette Traves', 'Kaohsiung City'),
+<<<<<<< HEAD
+(8, 'hockeyngc5195', 'f650534a6627577e51a2ab0c0b8f1652a37917ce49e19a5e6e475ba2be86a3fb', '5254', '0926035020', 'Kenya Ware', 'Matsu');
+=======
 (8, 'hockeyngc5195', 'f650534a6627577e51a2ab0c0b8f1652a37917ce49e19a5e6e475ba2be86a3fb', '5254', '0926035020', 'Kenya Ware', 'Matsu'),
 (9, 'vegasergue2', 'f604a9bf8af343a7ca8e055065a50a741ff4e1979241e9c3f5865c40ad79eb2d', '1244', '0938261511', 'Niles Woodham', 'Kinmen County'),
 (10, 'pigbeefse7en', '254f44698de7daf06743e4f981786677ffa8cfe8a53abbe7c4f679b6a20fdcc8', '7368', '0956671752', 'Almast Midgley', 'Tainan City');
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 
 --
 -- 已傾印資料表的索引
@@ -169,13 +195,21 @@ ALTER TABLE `users`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `shops`
 --
 ALTER TABLE `shops`
+<<<<<<< HEAD
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+=======
   MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
+<<<<<<< HEAD
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+=======
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+>>>>>>> bc07aca33d79cbfda1df3acf0ababc6cee763227
 
 --
 -- 已傾印資料表的限制式
