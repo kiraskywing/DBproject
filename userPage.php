@@ -361,6 +361,7 @@
                                                     <td>$staff_phone</td>
                                                     <td>
                                                         <form action="updateShop.php" method="post">
+                                                            <input type="hidden" name="shop_id" value="$shop_id">
                                                             <button class="btn btn-sm btn-danger" type="submit" name="staff_id" value="$staff_id">Delete</button><br>
                                                         </form>
                                                     </td>
