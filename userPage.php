@@ -278,20 +278,42 @@
                                 $per_mask_price = $row['per_mask_price']; $stock_quantity = $row['stock_quantity'];
                                 
                                 echo<<<EOT
-                                    <h1>My Shop</h1>
-                                    <li> Shop Name: $shop_name</li>
-                                    <li> City of Shop Location: $shop_city</li> 
-                                    <li> Shop's Phone: $shop_phone</li> 
-                                    <form action="updateShop.php" method="post">
-                                        Per Mask Price: <input type="text" name="per_mask_price" placeholder="$per_mask_price"> 
-                                                        <input type="hidden" name="shop_id" value="$shop_id">
-                                                        <button type="submit">Edit</button><br>
-                                    </form>
-                                    <form action="updateShop.php" method="post">
-                                        Mask Amount: <input type="text" name="stock_quantity" placeholder="$stock_quantity"> 
-                                                     <input type="hidden" name="shop_id" value="$shop_id">
-                                                     <button type="submit">Edit</button><br>
-                                    </form>
+                                    <div class="card profile">
+                                        <h1>My Shop</h1>
+                                        <table style="width: 100%" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Shop Name</th>
+                                                    <th scope="col">City of Shop Location</th>
+                                                    <th scope="col">Shop's Phone</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="table-warning">
+                                                    <th scope='row'>$shop_name</th>
+                                                    <td>$shop_city</td>
+                                                    <td>$shop_phone</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                        <form action="updateShop.php" method="post">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Per Mask Price</span>
+                                                <input type="text" class="form-control" name="per_mask_price" placeholder="$per_mask_price" aria-label="per_mask_price" aria-describedby="basic-addon1">
+                                                <input type="hidden" name="shop_id" value="$shop_id">
+                                                <button class="btn btn-lg btn-success" type="submit">Edit</button>
+                                            </div>
+                                        </form>
+                                        <form action="updateShop.php" method="post">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon2">Mask Amount</span>
+                                                <input type="text" class="form-control" name="stock_quantity" placeholder="$stock_quantity" aria-label="stock_quantity" aria-describedby="basic-addon1">
+                                                <input type="hidden" name="shop_id" value="$shop_id">
+                                                <button class="btn btn-lg btn-info" type="submit">Edit</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                     EOT;
                                 
                                 $query = $connection->prepare("select A.staff_id, B.account, B.phone_number, B.full_name, B.city
@@ -300,33 +322,57 @@
                                 $query->execute();
                                 
                                 echo<<<EOT
-                                    <h1>Employee</h1>
-                                    <form action="updateShop.php" method="post"> 
-                                        Type account: <input type="text" name="staff_userName" placeholer="Type account">
-                                        <input type="hidden" name="shop_id" value="$shop_id">
-                                        <button type="submit">Add</button><br>
-                                    </form>
+                                    <div class="card profile">
+                                        <h1>Employee</h1>
+                                        <form action="updateShop.php" method="post">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon3">Type account</span>
+                                                <input type="text" class="form-control" name="staff_userName" placeholder="Type account" aria-label="stock_quantity" aria-describedby="basic-addon1">
+                                                <input type="hidden" name="shop_id" value="$shop_id">
+                                                <button class="btn btn-lg btn-secondary" type="submit">Add</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                     EOT;
-                                
+                                echo<<<EOT
+                                    <div class="card profile">
+                                        <table style="width: 100%" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Account</th>
+                                                    <th scope="col">Full Name</th>
+                                                    <th scope="col">Phone</th>
+                                                    <th scope="col">Operation</th>
+                                                </tr>
+                                            </thead>
+                                    EOT;
                                     $i = 0;
                                 while ($row = $query->fetch()) {
                                     $j = $i + 1;
                                     $staff_id = $row[0];
                                     $staff_userName = $row[1]; $staff_phone = $row[2]; 
                                     $staff_fullName = $row[3]; $staff_city = $row[4];
+                                    $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
                                     echo<<<EOT
-                                        <form action="updateShop.php" method="post">
-                                            <li>
-                                                [$j] Account: $staff_userName<br>
-                                                Full Name: $staff_fullName<br>
-                                                Phone: $staff_phone<br>
-                                                <input type="hidden" name="shop_id" value="$shop_id">
-                                                <button type="submit" name="staff_id" value="$staff_id">Delete</button><br>
-                                            </li>
-                                        </form>
+                                            <tbody>
+                                                <tr class="$className">
+                                                    <th scope='row'>$staff_userName</th>
+                                                    <td>$staff_fullName</td>
+                                                    <td>$staff_phone</td>
+                                                    <td>
+                                                        <form action="updateShop.php" method="post">
+                                                            <button class="btn btn-sm btn-danger" type="submit" name="staff_id" value="$staff_id">Delete</button><br>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
                                         EOT;
                                     $i++;
                                 }
+                                echo<<<EOT
+                                        </table>
+                                    </div>
+                                EOT;
                             }
                         }
                         catch(Exception $e) {
