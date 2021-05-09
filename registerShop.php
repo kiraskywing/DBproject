@@ -21,30 +21,30 @@ try {
     $stock_quantity = $_POST['stock_quantity'];
     $shop_phone = $_POST['shop_phone'];
 
-    $stmt = $connection->prepare('select * from shops where shop_name = :shop_name');
-    $stmt->execute(array('shop_name' => $shop_name));
+    $query = $connection->prepare('select * from shops where shop_name = :shop_name');
+    $query->execute(array('shop_name' => $shop_name));
 
-    if ($stmt->rowCount() == 0) {
-        $stmt=$connection->prepare("insert into shops (shop_name, city, per_mask_price, stock_quantity, phone_number) 
-                                    values (:shop_name, :shop_city, :pre_mask_price, :stock_quantity, :shop_phone)");
-        $stmt->execute(array('shop_name' => $shop_name, 'shop_city' => $shop_city , 'pre_mask_price' => $pre_mask_price,
-                             'stock_quantity' => $stock_quantity, 'shop_phone' => $shop_phone));
+    if ($query->rowCount() == 0) {
+        $query = $connection->prepare("insert into shops (shop_name, city, per_mask_price, stock_quantity, phone_number) 
+                                                  values (:shop_name, :shop_city, :pre_mask_price, :stock_quantity, :shop_phone)");
+        $query->execute(array('shop_name' => $shop_name, 'shop_city' => $shop_city , 'pre_mask_price' => $pre_mask_price,
+                              'stock_quantity' => $stock_quantity, 'shop_phone' => $shop_phone));
         
-        $stmt=$connection->prepare('select shop_id from shops where shop_name = :shop_name');
-        $stmt->execute(array('shop_name' => $shop_name));
+        $query = $connection->prepare('select shop_id from shops where shop_name = :shop_name');
+        $query->execute(array('shop_name' => $shop_name));
         
-        $row = $stmt->fetch();     
+        $row = $query->fetch();     
         $staff_id = $_SESSION['user_id'];
         $shop_id = $row[0];
-        $stmt=$connection->prepare('insert into shop_staffs (staff_id, shop_id, isMaster) values (' . $staff_id . ', ' . $shop_id . ', true)');
-        $stmt->execute();
+        $query = $connection->prepare('insert into shop_staffs (staff_id, shop_id, isMaster) values (' . $staff_id . ', ' . $shop_id . ', true)');
+        $query->execute();
                                     
         echo <<<EOT
             <!DOCTYPE html>
             <html>
                 <body>
                     <script>
-                        alert("Create Shop Success!");
+                        alert("Register Shop Success!");
                         window.location.replace("userPage.php");
                     </script>
                 </body>

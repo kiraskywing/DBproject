@@ -14,7 +14,7 @@ try {
         $isShopStaff = isset($_POST['isShopStaff']) ? $_POST['isShopStaff'] : 0;
         
         $conditions = array();
-        if (empty($shop_name) && empty($shop_city) && empty($min_price) && empty($max_price) && $amount == -1 && $isShopStaff == -1) {
+        if (empty($shop_name) && empty($shop_city) && empty($min_price) && empty($max_price) && $amount == -1 && $isShopStaff == 0) {
             $sql_stmt = 'select * from shops';
         }
         else {
@@ -49,10 +49,10 @@ try {
         $_SESSION['shopMaskPrices'] = array();
         $_SESSION['shopStockQuantities'] = array();
         $_SESSION['shopPhones'] = array();
-        $stmt = $connection->prepare($sql_stmt);
-        $stmt->execute($conditions);
+        $query = $connection->prepare($sql_stmt);
+        $query->execute($conditions);
         
-        while ($row = $stmt->fetch()) {
+        while ($row = $query->fetch()) {
             $_SESSION['shopNames'][$i] = $row['shop_name'];
             $_SESSION['shopCities'][$i] = $row['city'];
             $_SESSION['shopMaskPrices'][$i] = $row['per_mask_price'];
@@ -77,23 +77,23 @@ try {
     EOT;
     
     if ($page > 1)
-        echo '<button type="button" onClick="location.href=\'search_shop.php?page=' . $page - 1 . '\'">Last</button>';
+        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page - 1 . '\'">Last</button>';
     for ($i = 1; $i <= $_SESSION['totalPages']; $i++)
     {
         if ($i == $page)
             echo "$i ";
         else
-            echo "<a href='search_shop.php?page=$i'>$i</a> ";
+            echo "<a href='searchShop.php?page=$i'>$i</a>";
     }
     if ($page < $_SESSION['totalPages'])
-        echo '<button type="button" onClick="location.href=\'search_shop.php?page=' . $page + 1 . '\'">Next</button><br>';
+        echo '<button type="button" onClick="location.href=\'searchShop.php?page=' . $page + 1 . '\'">Next</button><br>';
 
     $showLists = min($_SESSION['totalLists'] - $listsPerPage * ($page - 1), $listsPerPage);
 
     echo '<ul>';
     $i = 0 + $listsPerPage * ($page - 1);
     for ($j = 0; $j < $showLists; $i++, $j++) {
-        echo '<li> ' . '[' . $i . ']' . ' ' .
+        echo '<li> ' . '[' . $i + 1 . ']' . ' ' .
              'Shop Name: ' . $_SESSION['shopNames'][$i] . '; ' . '<br>' .
              'Shop City: ' . $_SESSION['shopCities'][$i] . '; ' . '<br>' .
              'Per Mask Price: ' . $_SESSION['shopMaskPrices'][$i] . '; ' . '<br>' .

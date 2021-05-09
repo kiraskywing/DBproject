@@ -1,10 +1,9 @@
 <?php
-    session_start();
-    # remove all session variables
-    session_unset(); 
-    # destroy the session
-    session_destroy();
+    session_start(); 
+    session_unset();   # remove all session variables
+    session_destroy(); # destroy the session
     $_SESSION['Authenticated']=false;
+    include "parameters.php";
 ?>
 
 <!DOCTYPE html>
@@ -233,7 +232,7 @@
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <form action="register.php" method="post">
+                    <form action="registerUser.php" method="post">
                         <img id="login-image" src="./login.png" alt="" height="120" width="108">
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
@@ -271,7 +270,6 @@
                             <div class="select-label">City of Residence</div>
                             <select class="form-select" name="city">
                                 <?php
-                                    include "parameters.php";
                                     foreach ($cities as $city)
                                         echo "<option value=\"" . $city . "\">" . $city . "</option>";
                                 ?>
