@@ -320,6 +320,7 @@
                                                 [$j] Account: $staff_userName<br>
                                                 Full Name: $staff_fullName<br>
                                                 Phone: $staff_phone<br>
+                                                <input type="hidden" name="shop_id" value="$shop_id">
                                                 <button type="submit" name="staff_id" value="$staff_id">Delete</button><br>
                                             </li>
                                         </form>
