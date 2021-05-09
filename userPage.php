@@ -34,7 +34,6 @@
         <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
         <meta name="theme-color" content="#7952b3">
 
-
         <style>
             .bd-placeholder-img {
                 font-size: 1.125rem;
@@ -50,15 +49,84 @@
             }
             .form-signin {
                 width: 100%;
-                max-width: 330px;
                 padding: 15px;
                 margin: auto;
                 margin-top: 15vh;
             }
             .login-button {
                 margin-top: 15px;
+                width: 100%;
+            }
+            .profile {
+                width: 60%;
+                margin-left: 20%;
+                margin-bottom: 30px;
+            }
+            .shop-list {
+                width: 340px;
+                margin-left: calc(50% - 170px);
+            }
+            .select-label {
+                position: absolute;
+                top: 10px;
+                left: 12px;
+                font-size: 12px;
+                color: #212529;
+                opacity: 0.65;
+            }
+            .form-floating {
+                position: relative;
+            }
+            .place-right {
+                position: absolute;
+                left: 350px;
+                bottom: 15px;
+                color: red;
+                display: none;
+                width: 400px;
+            }
+            .show {
+                display: block;
             }
         </style>
+        <script>
+            function disableSubmitButton() {
+                document.getElementById('search-button').disabled = true;
+            }
+            function enableSubmitButton() {
+                document.getElementById('search-button').disabled = false;
+            }
+            function showNotice(idName) {
+                document.getElementById(idName).classList.add('show');
+            }
+            function hideNotice(idName) {
+                document.getElementById(idName).classList.remove('show');
+            }
+            function confirmMinInput(element) {
+                if (!Boolean(document.getElementById('max_price').value)) return;
+                if (element.value > document.getElementById('max_price').value) {
+                    showNotice('min-price-notice');
+                    showNotice('max-price-notice');
+                    disableSubmitButton();
+                } else {
+                    hideNotice('min-price-notice');
+                    hideNotice('max-price-notice');
+                    enableSubmitButton();
+                }
+            }
+            function confirmMaxInput(element) {
+                if (!Boolean(document.getElementById('min_price').value)) return;
+                if (element.value < document.getElementById('min_price').value) {
+                    showNotice('min-price-notice');
+                    showNotice('max-price-notice');
+                    disableSubmitButton();
+                } else {
+                    hideNotice('min-price-notice');
+                    hideNotice('max-price-notice');
+                    enableSubmitButton();
+                }
+            }
+        </script>
     </head>
     <body class="text-center">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -77,36 +145,73 @@
             <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <main class="form-signin">
-                    <h2>Profile</h2>
-                    <?php
-                        echo "Account: " . $_SESSION['account'] . "<br>" .
-                             "Full Name: " . $_SESSION['full_name'] . "<br>" .
-                             "Phone Number: " . $_SESSION['phone_number'] . "<br>" .
-                             "City of Residence: " . $_SESSION['city'] . "<br>";
-                    ?>
-
-                    <h2>Shop List</h2>
-                    <form action="searchShop.php" method="post">
-                        Shop: <input type="text" name="shop_name"><br>
-                        City: <select name="shop_city">
-                                <option value="">All</option>
-                                <?php
-                                    foreach ($cities as $city)
-                                        echo '<option value="' . $city . '">' . $city . '</option>';
-                                ?>
-                              </select><br>
-                        Price: min<input type="text" name="min_price"><br> 
-                               max<input type="text" name="max_price"><br>
-                        Amount: <select name="amount">
+                    <div class="card profile">
+                        <h2 style="border-bottom: 1px solid gray">Profile</h2>
+                        <table style="width: 100%" class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Account</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Phone Number</th>
+                                <th scope="col">City of Residence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-info">
+                                    <?php
+                                        echo "<th scope='row'>" . $_SESSION['account'] . "</th>" .
+                                            "<td>" . $_SESSION['full_name'] . "</td>" .
+                                            "<td>" . $_SESSION['phone_number'] . "</td>" .
+                                            "<td>" . $_SESSION['city'] . "</td>";
+                                    ?>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="shop-list">
+                        <h2>Shop List</h2>
+                        <form action="searchShop.php" method="post">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder="please input shop">
+                                <label for="account">Shop</label>
+                            </div>
+                            <div class="form-floating">
+                                <div class="select-label">City</div>
+                                <select class="form-select" name="shop_city">
+                                    <option value="">All</option>
+                                    <?php
+                                        foreach ($cities as $city)
+                                            echo '<option value="' . $city . '">' . $city . '</option>';
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-floating">
+                                <input onchange="confirmMinInput(this)" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
+                                <label for="min_price">Min of price</label>
+                                <div id="min-price-notice" class="place-right">Min of price should not greater than max of price</div>
+                            </div>
+                            <div class="form-floating">
+                                <input onchange="confirmMaxInput(this)" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
+                                <label for="max_price">Max of price</label>
+                                <div id="max-price-notice" class="place-right">Max of price should not smaller than min of price</div>
+                            </div>
+                            <div class="form-floating">
+                                <div class="select-label">Amount</div>
+                                <select class="form-select" name="amount">
                                     <option value="-1">All</option>
                                     <?php
                                         for ($i = 0; $i < count($amount); $i++)
                                             echo '<option value="' . $i . '">' . $amount[$i] . '</option>';
                                     ?>
-                                </select><br>
-                        Only show the shop I work at <input type="checkbox" value="1" name="isShopStaff">
-                        <button class="login-button w-100 btn btn-lg btn-success" type="submit">Search</button>
-                    </form>
+                                </select>
+                            </div>
+                            <div style="padding: 10px" class="form-switch">
+                                <input class="form-check-input" type="checkbox" value="1" name="isShopStaff" id="flexSwitchCheckDefault">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Only show the shop I work at</label>
+                            </div>
+                            <button id="search-button" class="login-button btn btn-lg btn-success" type="submit">Search</button>
+                        </form>
+                    </div>
                     <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
@@ -131,7 +236,7 @@
                                 
                                 echo<<<EOT
                                     <div class="form-floating">
-                                        Shop Location
+                                        City of Shop Location
                                         <select name="shop_city">
                                     EOT;
                                 
@@ -175,7 +280,7 @@
                                 echo<<<EOT
                                     <h1>My Shop</h1>
                                     <li> Shop Name: $shop_name</li>
-                                    <li> Shop Location: $shop_city</li> 
+                                    <li> City of Shop Location: $shop_city</li> 
                                     <li> Shop's Phone: $shop_phone</li> 
                                     <form action="updateShop.php" method="post">
                                         Per Mask Price: <input type="text" name="per_mask_price" placeholder="$per_mask_price"> 
