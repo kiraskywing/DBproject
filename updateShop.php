@@ -30,7 +30,7 @@ try {
         $query->execute();
 
         if ($query->rowCount() == 1)
-            throw new Exception("This person is already work at this shop!");
+            throw new Exception("This person is already working at this shop!");
         
         $query = $connection->prepare('insert into shop_staffs (staff_id, shop_id, isMaster) values (' . $staff_id . ', ' . $_POST['shop_id'] . ', false)');
         $query->execute();
