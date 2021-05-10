@@ -116,16 +116,16 @@
                 function replaceToFailImg() {
                     document.getElementById('login-image').src = './login-fail.jpeg';
                 }
-                function confirmAllStatus() {
-                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = inputStatus;
-                    return (
-                        ACCOUNT
-                        && PASSWORD
-                        && CONFIRM_PASSWORD
-                        && FULL_NAME
-                        && PHONE
-                    );
-                }
+                // function confirmAllStatus() {
+                //     const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = inputStatus;
+                //     return (
+                //         ACCOUNT
+                //         && PASSWORD
+                //         && CONFIRM_PASSWORD
+                //         && FULL_NAME
+                //         && PHONE
+                //     );
+                // }
                 function confirmDisplayImageStatus() {
                     const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = displayImageState;
                     return (
@@ -149,12 +149,13 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        if (confirmAllStatus()) enableSubmitButton();
+                        enableSubmitButton();
                     }
                 }
                 function confirmAccountOrPassword(element, noticeElementId, inputStatusKey) {
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
                     if (!passwordTester.test(element.value)) {
+                        document.getElementById(noticeElementId).innerHTML = '*Invalid format';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
                         displayImageState[inputStatusKey] = false;
@@ -165,7 +166,8 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        if (confirmAllStatus()) enableSubmitButton();
+                        enableSubmitButton();
+                        if (inputStatusKey === 'ACCOUNT') checkAccountIsRegistered(element.value, noticeElementId);
                     }
                 }
                 function doubleCheckPassword(element, inputStatusKey) {
@@ -180,7 +182,7 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        if (confirmAllStatus()) enableSubmitButton();
+                        enableSubmitButton();
                     }
                 }
                 function isNumber(element, inputStatusKey) {
@@ -196,12 +198,12 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        if (confirmAllStatus()) enableSubmitButton();
+                        enableSubmitButton();
                     }
                 }
 
-                function checkAccountIsRegistered(element) {
-                    if (element != "") {
+                function checkAccountIsRegistered(element, noticeElementId) {
+                    if (element) {
                         var xhttp = new XMLHttpRequest();
                         xhttp.onreadystatechange = function() {
                             var message;
@@ -217,16 +219,15 @@
                                         message = 'Oops. There is something wrong.';
                                         break; 
                                 }
-                                document.getElementById("msg").innerHTML = message; 
+                                document.getElementById(noticeElementId).innerHTML = message;
+                                showNotice(noticeElementId);
                             }
                         };
                         xhttp.open("POST", "registerUser.php", true); 
                         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
                         xhttp.send("checkAccount="+element);
                     }
-                    else {
-                        document.getElementById("msg").innerHTML = "";
-                    }
+                    hideNotice(noticeElementId);
                 }
             </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -266,34 +267,34 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT'); checkAccountIsRegistered(this.value);" type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input required oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
-                            <div id="account-notice" class="place-right">*Invalid format (Only combination of upper/lower-case English characters and digits, length: 4 - 20)</div>
+                            <div id="account-notice" class="place-right">*Invalid format</div>
                         </div>
                         <label id="msg"></label><br>
                         
                         <div class="form-floating">
-                            <input oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
+                            <input required oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
-                            <div id="password-notice" class="place-right">*Invalid format (Only combination of upper/lower-case English characters and digits, length: 4 - 20)</div>
+                            <div id="password-notice" class="place-right">*Invalid format</div>
                         </div>
 
                         <div class="form-floating">
-                            <input oninput="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
+                            <input required oninput="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
                             <label for="re_password">Confirm Password</label>
                             <div id="confirm-password-notice" class="place-right">*Comfirmed password mismatch!</div>
                         </div>
 
                         <div class="form-floating">
-                            <input oninput="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
+                            <input required oninput="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
                             <label for="full_name">Full Name</label>
                             <div id="full-name-notice" class="place-right">*Input required!</div>
                         </div>
                         
                         <div class="form-floating">
-                            <input oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
+                            <input required oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">*Invalid format (Should be exactly 10 digits)</div>
+                            <div id="phone-notice" class="place-right">*Invalid format (should be exactly 10 digits)</div>
                         </div>
 
                         <div class="form-floating">
@@ -307,7 +308,7 @@
                             <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                         </div>
                         
-                        <button disabled id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                        <button id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                     </form>
                 </main>
