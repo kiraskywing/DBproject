@@ -45,13 +45,13 @@
                 $conditions['shop_name'] = '%' . strtolower($shop_name). '%';
                 $conditions['shop_city'] = '%' . strtolower($shop_city). '%';
                 if (!empty($min_price)) {
-                    if ($min_price < 0 || !is_int($min_price))
-                        throw new Exception("Price should be non-negative integer");
+                    // if ($min_price < 0 || !is_int($min_price))
+                    //     throw new Exception("Price should be non-negative integer");
                     $conditions['min_price'] = $min_price;
                 }
                 if (!empty($max_price)) {
-                    if ($max_price < 0 || !is_int($min_price))
-                        throw new Exception("Price should be non-negative integer");
+                    // if ($max_price < 0 || !is_int($min_price))
+                    //     throw new Exception("Price should be non-negative integer");
                     $conditions['max_price'] = $max_price;
                 }
 

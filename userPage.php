@@ -140,6 +140,34 @@
                 //     enableSubmitButton();
                 // }
             }
+            function checkShopIsRegistered(element) {
+                if (element != "") {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        var message;
+                        if (this.readyState == 4 && this.status == 200) {
+                            switch(this.responseText) { 
+                                case 'YES':
+                                    message = 'This shop name is available.';
+                                    break; 
+                                case 'NO':
+                                    message = 'This shop name has been registered!';
+                                    break;
+                                default:
+                                    message = 'Oops. There is something wrong.';
+                                    break; 
+                            }
+                            document.getElementById("msg").innerHTML = message; 
+                        }
+                    };
+                    xhttp.open("POST", "registerShop.php", true); 
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+                    xhttp.send("checkShop="+element);
+                }
+                else {
+                    document.getElementById("msg").innerHTML = "";
+                }
+            }
         </script>
     </head>
     <body class="text-center">
@@ -243,22 +271,24 @@
                                     <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
             
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                        <input oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
                                         <label for="shop_name">Shop Name</label>
                                     </div>
+                                    <label id="msg"></label><br>
                                 EOT;
                                 
                                 echo<<<EOT
                                     <div class="form-floating">
-                                        City of Shop Location
-                                        <select name="shop_city">
+                                        <div class="select-label">City of Shop Location</div>
+                                            <select class="form-select" name="shop_city">
                                     EOT;
                                 
                                 foreach ($cities as $city)
-                                    echo "<option value=\"" . $city . "\">" . $city . "</option>";
+                                    echo   "<option value=\"" . $city . "\">" . $city . "</option>";
                                 
                                 echo<<<EOT
-                                        </select>
+                                            </select>
+                                        <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                                     </div>
                                 EOT;
                                 
