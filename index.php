@@ -1,8 +1,5 @@
 <?php
     session_start();
-    if (isset($_SESSION['accountIsRepeat'])) {
-        $accountIsRepeat = $_SESSION['accountIsRepeat'];
-    }
     session_unset();   # remove all session variables
     session_destroy(); # destroy the session
     $_SESSION['Authenticated'] = false;
@@ -203,21 +200,21 @@
                     }
                 }
 
-                function check_name(uname) {
-                    if (uname != "") {
+                function checkAccountIsRegistered(element) {
+                    if (element != "") {
                         var xhttp = new XMLHttpRequest();
                         xhttp.onreadystatechange = function() {
                             var message;
                             if (this.readyState == 4 && this.status == 200) {
                                 switch(this.responseText) { 
                                     case 'YES':
-                                        message='The account is available.';
+                                        message = 'The account is available.';
                                         break; 
                                     case 'NO':
-                                        message='The account has been registered!';
+                                        message = 'The account has been registered!';
                                         break;
                                     default:
-                                        message='Oops. There is something wrong.';
+                                        message = 'Oops. There is something wrong.';
                                         break; 
                                 }
                                 document.getElementById("msg").innerHTML = message; 
@@ -225,7 +222,7 @@
                         };
                         xhttp.open("POST", "registerUser.php", true); 
                         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
-                        xhttp.send("checkAccount="+uname);
+                        xhttp.send("checkAccount="+element);
                     }
                     else {
                         document.getElementById("msg").innerHTML = "";
@@ -269,11 +266,11 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT')" type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT'); checkAccountIsRegistered(this.value);" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
                             <div id="account-notice" class="place-right">*Invalid format</div>
-                            <input onchange="check_name(this.value)" type="text" name="uname"><label id="msg"></label><br>
                         </div>
+                        <label id="msg"></label><br>
                         
                         <div class="form-floating">
                             <input oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
