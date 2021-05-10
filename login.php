@@ -5,8 +5,7 @@ include "db_connection.php";
 
 try
 {
-    if (!isset($_POST['account']) || !isset($_POST['pwd']))
-    {
+    if (!isset($_POST['account']) || !isset($_POST['pwd'])) {
         header("Location: index.php");
         exit();
     }

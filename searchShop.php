@@ -23,6 +23,13 @@
 
         if (!isset($_SESSION['shopNames']) && !isset($_SESSION['shopCities']) && !isset($_SESSION['shopMaskPrices']) 
          && !isset($_SESSION['shopStockQuantities']) && !isset($_SESSION['shopPhones'])) {
+            
+            if (!isset($_POST['shop_name']) || !isset($_POST['shop_city']) || !isset($_POST['min_price']) 
+             || !isset($_POST['max_price']) || !isset($_POST['amount'])) {
+                header("Location: userPage.php");
+                exit();
+            }
+            
             $shop_name = $_POST['shop_name'];
             $shop_city = $_POST['shop_city'];
             $min_price = $_POST['min_price'];
@@ -37,8 +44,16 @@
             else {
                 $conditions['shop_name'] = '%' . strtolower($shop_name). '%';
                 $conditions['shop_city'] = '%' . strtolower($shop_city). '%';
-                if (!empty($min_price)) $conditions['min_price'] = $min_price;
-                if (!empty($max_price)) $conditions['max_price'] = $max_price;
+                if (!empty($min_price)) {
+                    // if ($min_price < 0 || !is_int($min_price))
+                    //     throw new Exception("Price should be non-negative integer");
+                    $conditions['min_price'] = $min_price;
+                }
+                if (!empty($max_price)) {
+                    // if ($max_price < 0 || !is_int($min_price))
+                    //     throw new Exception("Price should be non-negative integer");
+                    $conditions['max_price'] = $max_price;
+                }
 
                 $sql_stmt = 'select * from shops where (lower(shop_name) like :shop_name) and (city like :shop_city)';
 

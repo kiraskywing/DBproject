@@ -1,6 +1,24 @@
 <?php 
-
 include "authentication.php"; 
+
+try {
+    if (isset($_REQUEST['checkShop'])) {
+        $shopName = $_REQUEST['checkShop'];
+        $query = $connection->prepare("select shop_name from shops where shop_name = :shopName");
+        $query->execute(array('shopName' => $shopName));
+        
+        if ($query->rowCount() == 0)
+            echo 'YES';
+        else 
+            echo 'NO'; 
+        
+        exit();
+    }
+}
+catch (Exception $e) {
+    echo 'Failed';
+    exit();
+}
 
 try {
     if (!isset($_POST['shop_name']) || !isset($_POST['shop_city']) || !isset($_POST['pre_mask_price']) 
@@ -20,6 +38,11 @@ try {
     $pre_mask_price = $_POST['pre_mask_price'];
     $stock_quantity = $_POST['stock_quantity'];
     $shop_phone = $_POST['shop_phone'];
+    
+    // if (!is_numeric($pre_mask_price) || (int)$pre_mask_price != $pre_mask_price || $pre_mask_price < 0)
+    //     throw new Exception('Mask price should be non-negative integer!');
+    // if (!is_numeric($stock_quantity) || (int)$stock_quantity != $stock_quantity || $stock_quantity < 0)
+    //     throw new Exception('Stock quantity should be non-negative integer!');
 
     $query = $connection->prepare('select * from shops where shop_name = :shop_name');
     $query->execute(array('shop_name' => $shop_name));

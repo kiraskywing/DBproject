@@ -1,17 +1,7 @@
 <?php 
     include "authentication.php";
     include "parameters.php";
-    if (isset($_SESSION['shopNames'])) unset($_SESSION['shopNames']);
-    if (isset($_SESSION['shopCities'])) unset($_SESSION['shopCities']);
-    if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);
-    if (isset($_SESSION['shopStockQuantities'])) unset($_SESSION['shopStockQuantities']);
-    if (isset($_SESSION['shopPhones'])) unset($_SESSION['shopPhones']); 
-    if (isset($_SESSION['order'])) unset($_SESSION['order']);
-    if (isset($_SESSION['sortShopName'])) unset($_SESSION['sortShopName']);
-    if (isset($_SESSION['sortShopCity'])) unset($_SESSION['sortShopCity']);
-    if (isset($_SESSION['sortMaskPrice'])) unset($_SESSION['sortMaskPrice']);
-    if (isset($_SESSION['sortMaskAmount'])) unset($_SESSION['sortMaskAmount']);
-    if (isset($_SESSION['sortShopPhone'])) unset($_SESSION['sortShopPhone']);
+    include "resetSearchSessions.php";
 ?>
 
 <!DOCTYPE html>
@@ -109,8 +99,7 @@
                 document.getElementById(idName).classList.remove('show');
             }
             function confirmMinInput(element) {
-                if (!Boolean(document.getElementById('max_price').value)) return;
-                if (element.value > document.getElementById('max_price').value) {
+                if (Boolean(document.getElementById('max_price').value) && element.value > document.getElementById('max_price').value) {
                     showNotice('min-price-notice');
                     showNotice('max-price-notice');
                     disableSubmitButton();
@@ -119,10 +108,19 @@
                     hideNotice('max-price-notice');
                     enableSubmitButton();
                 }
+                // if (!Boolean(document.getElementById('max_price').value)) return;
+                // if (element.value > document.getElementById('max_price').value) {
+                //     showNotice('min-price-notice');
+                //     showNotice('max-price-notice');
+                //     disableSubmitButton();
+                // } else {
+                //     hideNotice('min-price-notice');
+                //     hideNotice('max-price-notice');
+                //     enableSubmitButton();
+                // }
             }
             function confirmMaxInput(element) {
-                if (!Boolean(document.getElementById('min_price').value)) return;
-                if (element.value < document.getElementById('min_price').value) {
+                if (Boolean(document.getElementById('min_price').value) && element.value < document.getElementById('min_price').value) {
                     showNotice('min-price-notice');
                     showNotice('max-price-notice');
                     disableSubmitButton();
@@ -130,6 +128,44 @@
                     hideNotice('min-price-notice');
                     hideNotice('max-price-notice');
                     enableSubmitButton();
+                }
+                // if (!Boolean(document.getElementById('min_price').value)) return;
+                // if (element.value < document.getElementById('min_price').value) {
+                //     showNotice('min-price-notice');
+                //     showNotice('max-price-notice');
+                //     disableSubmitButton();
+                // } else {
+                //     hideNotice('min-price-notice');
+                //     hideNotice('max-price-notice');
+                //     enableSubmitButton();
+                // }
+            }
+            function checkShopIsRegistered(element) {
+                if (element != "") {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        var message;
+                        if (this.readyState == 4 && this.status == 200) {
+                            switch(this.responseText) { 
+                                case 'YES':
+                                    message = 'This shop name is available.';
+                                    break; 
+                                case 'NO':
+                                    message = 'This shop name has been registered!';
+                                    break;
+                                default:
+                                    message = 'Oops. There is something wrong.';
+                                    break; 
+                            }
+                            document.getElementById("msg").innerHTML = message; 
+                        }
+                    };
+                    xhttp.open("POST", "registerShop.php", true); 
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+                    xhttp.send("checkShop="+element);
+                }
+                else {
+                    document.getElementById("msg").innerHTML = "";
                 }
             }
         </script>
@@ -194,12 +230,12 @@
                             <div class="form-floating">
                                 <input onchange="confirmMinInput(this)" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
                                 <label for="min_price">Min of price</label>
-                                <div id="min-price-notice" class="place-right">Min of price should not greater than max of price</div>
+                                <div id="min-price-notice" class="place-right">Min of price shouldn't be greater than max of price</div>
                             </div>
                             <div class="form-floating">
                                 <input onchange="confirmMaxInput(this)" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
                                 <label for="max_price">Max of price</label>
-                                <div id="max-price-notice" class="place-right">Max of price should not smaller than min of price</div>
+                                <div id="max-price-notice" class="place-right">Max of price shouldn't be smaller than min of price</div>
                             </div>
                             <div class="form-floating">
                                 <div class="select-label">Amount</div>
@@ -235,22 +271,24 @@
                                     <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
             
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                        <input oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
                                         <label for="shop_name">Shop Name</label>
                                     </div>
+                                    <label id="msg"></label><br>
                                 EOT;
                                 
                                 echo<<<EOT
                                     <div class="form-floating">
-                                        City of Shop Location
-                                        <select name="shop_city">
+                                        <div class="select-label">City of Shop Location</div>
+                                            <select class="form-select" name="shop_city">
                                     EOT;
                                 
                                 foreach ($cities as $city)
-                                    echo "<option value=\"" . $city . "\">" . $city . "</option>";
+                                    echo   "<option value=\"" . $city . "\">" . $city . "</option>";
                                 
                                 echo<<<EOT
-                                        </select>
+                                            </select>
+                                        <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                                     </div>
                                 EOT;
                                 
