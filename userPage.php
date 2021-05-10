@@ -85,12 +85,29 @@
                 display: block;
             }
         </style>
+        <script src="utils.js"></script> 
         <script>
+            const inputStates = {
+                SHOP_NAME: false,
+                SHOP_PHONE_NUMBER: false,
+                MASK_PRICE: false,
+                MASK_AMOUNT: false,
+            };
+            // function confirmAllStateEnable () {
+            //     const { SHOP_NAME, SHOP_PHONE_NUMBER, MASK_PRICE, MASK_AMOUNT } = inputStates;
+            //     return SHOP_NAME && SHOP_PHONE_NUMBER && MASK_PRICE && MASK_AMOUNT;
+            // }
             function disableSubmitButton() {
                 document.getElementById('search-button').disabled = true;
             }
             function enableSubmitButton() {
                 document.getElementById('search-button').disabled = false;
+            }
+            function disableRegisterButton() {
+                document.getElementById('register-button').disabled = true;
+            }
+            function enabledRegisterButton() {
+                document.getElementById('register-button').disabled = false;
             }
             function showNotice(idName) {
                 document.getElementById(idName).classList.add('show');
@@ -99,7 +116,8 @@
                 document.getElementById(idName).classList.remove('show');
             }
             function confirmMinInput(element) {
-                if (Boolean(document.getElementById('max_price').value) && element.value > document.getElementById('max_price').value) {
+                if (!Boolean(document.getElementById('max_price').value)) return;
+                if (element.value && (element.value > document.getElementById('max_price').value)) {
                     showNotice('min-price-notice');
                     showNotice('max-price-notice');
                     disableSubmitButton();
@@ -108,19 +126,10 @@
                     hideNotice('max-price-notice');
                     enableSubmitButton();
                 }
-                // if (!Boolean(document.getElementById('max_price').value)) return;
-                // if (element.value > document.getElementById('max_price').value) {
-                //     showNotice('min-price-notice');
-                //     showNotice('max-price-notice');
-                //     disableSubmitButton();
-                // } else {
-                //     hideNotice('min-price-notice');
-                //     hideNotice('max-price-notice');
-                //     enableSubmitButton();
-                // }
             }
             function confirmMaxInput(element) {
-                if (Boolean(document.getElementById('min_price').value) && element.value < document.getElementById('min_price').value) {
+                if (!Boolean(document.getElementById('min_price').value)) return;
+                if (element.value && (element.value < document.getElementById('min_price').value)) {
                     showNotice('min-price-notice');
                     showNotice('max-price-notice');
                     disableSubmitButton();
@@ -129,19 +138,42 @@
                     hideNotice('max-price-notice');
                     enableSubmitButton();
                 }
-                // if (!Boolean(document.getElementById('min_price').value)) return;
-                // if (element.value < document.getElementById('min_price').value) {
-                //     showNotice('min-price-notice');
-                //     showNotice('max-price-notice');
-                //     disableSubmitButton();
-                // } else {
-                //     hideNotice('min-price-notice');
-                //     hideNotice('max-price-notice');
-                //     enableSubmitButton();
-                // }
+            }
+            function handleChangeMaskPrice(element) {
+                if (isPositiveInteger(element.value)) {
+                    hideNotice('mask-price-notice');
+                    inputStates.MASK_PRICE = true;
+                    enabledRegisterButton();
+                } else {
+                    showNotice('mask-price-notice');
+                    inputStates.MASK_PRICE = false;
+                    disableRegisterButton();
+                }
+            }
+            function handleChangeMaskAmount(element) {
+                if (isPositiveInteger(element.value)) {
+                    hideNotice('mask-amount-notice');
+                    inputStates.MASK_AMOUNT = true;
+                    enabledRegisterButton();
+                } else {
+                    showNotice('mask-amount-notice');
+                    inputStates.MASK_AMOUNT = false;
+                    disableRegisterButton();
+                }
+            }
+            function handleChangeShopsPhoneNumber(element) {
+                if (isCellPhoneNumber(element.value)) {
+                    hideNotice('shops-phone-number-notice');
+                    inputStates.SHOP_PHONE_NUMBER = true;
+                    enabledRegisterButton();
+                } else {
+                    showNotice('shops-phone-number-notice');
+                    inputStates.SHOP_PHONE_NUMBER = false;
+                    disableRegisterButton();
+                }
             }
             function checkShopIsRegistered(element) {
-                if (element != "") {
+                if (element) {
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         var message;
@@ -149,23 +181,30 @@
                             switch(this.responseText) { 
                                 case 'YES':
                                     message = 'This shop name is available.';
+                                    inputStates.SHOP_NAME = true;
+                                    enabledRegisterButton();
                                     break; 
                                 case 'NO':
                                     message = 'This shop name has been registered!';
+                                    inputStates.SHOP_NAME = false;
+                                    disableRegisterButton();
                                     break;
                                 default:
                                     message = 'Oops. There is something wrong.';
+                                    inputStates.SHOP_NAME = false;
+                                    disableRegisterButton();
                                     break; 
                             }
-                            document.getElementById("msg").innerHTML = message; 
+                            document.getElementById("shop-name-notice").innerHTML = message;
+                            showNotice('shop-name-notice');
                         }
                     };
                     xhttp.open("POST", "registerShop.php", true); 
                     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
                     xhttp.send("checkShop="+element);
-                }
-                else {
-                    document.getElementById("msg").innerHTML = "";
+                } else {
+                    inputStates.SHOP_NAME = false;
+                    disableRegisterButton();
                 }
             }
         </script>
@@ -259,183 +298,187 @@
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <main class="form-signin">
-                    <?php 
-                        try {
-                            $query = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
-                            $query->execute();
-                            
-                            if ($query->rowCount() == 0) {
-                                echo<<<EOT
-                                <form action="registerShop.php" method="post">
-                                    <img src="./login.png" alt="" height="120" width="108">
-                                    <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
-            
-                                    <div class="form-floating">
-                                        <input oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
-                                        <label for="shop_name">Shop Name</label>
-                                    </div>
-                                    <label id="msg"></label><br>
-                                EOT;
-                                
-                                echo<<<EOT
-                                    <div class="form-floating">
-                                        <div class="select-label">City of Shop Location</div>
-                                            <select class="form-select" name="shop_city">
-                                    EOT;
-                                
-                                foreach ($cities as $city)
-                                    echo   "<option value=\"" . $city . "\">" . $city . "</option>";
-                                
-                                echo<<<EOT
-                                            </select>
-                                        <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
-                                    </div>
-                                EOT;
-                                
-                                echo<<<EOT
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
-                                        <label for="pre_mask_price">Mask Price</label>
-                                    </div>
-                                
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
-                                        <label for="stock_quantity">Mask Amount</label>
-                                    </div>
-                                    
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
-                                        <label for="shop_phone">Shop's Phone Number</label>
-                                    </div>
-            
-                                    <button class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
-                                </form>
-                                EOT;
-                            }
-                            else {
-                                $shop_id = $query->fetch()['shop_id'];
-                                $query = $connection->prepare('select * from shops where shop_id = ' . $shop_id);
+                    <div class="shop-list">
+                        <?php 
+                            try {
+                                $query = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
                                 $query->execute();
                                 
-                                $row = $query->fetch();
-                                $shop_name = $row['shop_name']; $shop_city = $row['city']; $shop_phone = $row['phone_number'];
-                                $per_mask_price = $row['per_mask_price']; $stock_quantity = $row['stock_quantity'];
-                                
-                                echo<<<EOT
-                                    <div class="card profile">
-                                        <h1>My Shop</h1>
-                                        <table style="width: 100%" class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Shop Name</th>
-                                                    <th scope="col">Shop Location</th>
-                                                    <th scope="col">Shop's Phone</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="table-warning">
-                                                    <th scope='row'>$shop_name</th>
-                                                    <td>$shop_city</td>
-                                                    <td>$shop_phone</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        
-                                        <form action="updateShop.php" method="post">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" id="basic-addon1">Per Mask Price</span>
-                                                <input type="text" class="form-control" name="per_mask_price" placeholder="$per_mask_price" aria-label="per_mask_price" aria-describedby="basic-addon1">
-                                                <input type="hidden" name="shop_id" value="$shop_id">
-                                                <button class="btn btn-lg btn-success" type="submit">Edit</button>
-                                            </div>
-                                        </form>
-                                        <form action="updateShop.php" method="post">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" id="basic-addon2">Mask Amount</span>
-                                                <input type="text" class="form-control" name="stock_quantity" placeholder="$stock_quantity" aria-label="stock_quantity" aria-describedby="basic-addon1">
-                                                <input type="hidden" name="shop_id" value="$shop_id">
-                                                <button class="btn btn-lg btn-info" type="submit">Edit</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    EOT;
-                                
-                                $query = $connection->prepare("select A.staff_id, B.account, B.phone_number, B.full_name, B.city
-                                                               from shop_staffs A join users B on A.staff_id = B.user_id 
-                                                               where A.shop_id = " . $shop_id . " and isMaster = false");
-                                $query->execute();
-                                
-                                echo<<<EOT
-                                    <div class="card profile">
-                                        <h1>Employee</h1>
-                                        <form action="updateShop.php" method="post">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" id="basic-addon3">Type account</span>
-                                                <input type="text" class="form-control" name="staff_userName" placeholder="Type account" aria-label="stock_quantity" aria-describedby="basic-addon1">
-                                                <input type="hidden" name="shop_id" value="$shop_id">
-                                                <button class="btn btn-lg btn-secondary" type="submit">Add</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    EOT;
-                                echo<<<EOT
-                                    <div class="card profile">
-                                        <table style="width: 100%" class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Account</th>
-                                                    <th scope="col">Full Name</th>
-                                                    <th scope="col">Phone</th>
-                                                    <th scope="col">Operation</th>
-                                                </tr>
-                                            </thead>
-                                    EOT;
-                                    $i = 0;
-                                while ($row = $query->fetch()) {
-                                    $j = $i + 1;
-                                    $staff_id = $row[0];
-                                    $staff_userName = $row[1]; $staff_phone = $row[2]; 
-                                    $staff_fullName = $row[3]; $staff_city = $row[4];
-                                    $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
+                                if ($query->rowCount() == 0) {
                                     echo<<<EOT
-                                            <tbody>
-                                                <tr class="$className">
-                                                    <th scope='row'>$staff_userName</th>
-                                                    <td>$staff_fullName</td>
-                                                    <td>$staff_phone</td>
-                                                    <td>
-                                                        <form action="updateShop.php" method="post">
-                                                            <input type="hidden" name="shop_id" value="$shop_id">
-                                                            <button class="btn btn-sm btn-danger" type="submit" name="staff_id" value="$staff_id">Delete</button><br>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
+                                    <form action="registerShop.php" method="post">
+                                        <img src="./login.png" alt="" height="120" width="108">
+                                        <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
+                
+                                        <div class="form-floating">
+                                            <input required oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                            <label for="shop_name">Shop Name</label>
+                                            <div id="shop-name-notice" class="place-right">You should fill shop name</div>
+                                        </div>
+                                    EOT;
+                                    
+                                    echo<<<EOT
+                                        <div class="form-floating">
+                                            <div class="select-label">City of Shop Location</div>
+                                                <select class="form-select" name="shop_city">
                                         EOT;
-                                    $i++;
+                                    
+                                    foreach ($cities as $city)
+                                        echo   "<option value=\"" . $city . "\">" . $city . "</option>";
+                                    
+                                    echo<<<EOT
+                                                </select>
+                                            <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
+                                        </div>
+                                    EOT;
+                                    
+                                    echo<<<EOT
+                                        <div class="form-floating">
+                                            <input required min="0" onchange="handleChangeMaskPrice(this)" type="number" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
+                                            <label for="pre_mask_price">Mask Price</label>
+                                            <div id="mask-price-notice" class="place-right">Mask price must be postive integer</div>
+                                        </div>
+                                    
+                                        <div class="form-floating">
+                                            <input required min="0" onchange="handleChangeMaskAmount(this)" type="number" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
+                                            <label for="stock_quantity">Mask Amount</label>
+                                            <div id="mask-amount-notice" class="place-right">Mask Amount must be postive integer</div>
+                                        </div>
+                                        
+                                        <div class="form-floating">
+                                            <input required onchange="handleChangeShopsPhoneNumber(this)" type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
+                                            <label for="shop_phone">Shop's Phone Number</label>
+                                            <div id="shops-phone-number-notice" class="place-right">You should fill shop's phone number</div>
+                                        </div>
+                
+                                        <button id="register-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
+                                    </form>
+                                    EOT;
                                 }
-                                echo<<<EOT
-                                        </table>
-                                    </div>
+                                else {
+                                    $shop_id = $query->fetch()['shop_id'];
+                                    $query = $connection->prepare('select * from shops where shop_id = ' . $shop_id);
+                                    $query->execute();
+                                    
+                                    $row = $query->fetch();
+                                    $shop_name = $row['shop_name']; $shop_city = $row['city']; $shop_phone = $row['phone_number'];
+                                    $per_mask_price = $row['per_mask_price']; $stock_quantity = $row['stock_quantity'];
+                                    
+                                    echo<<<EOT
+                                        <div class="card profile">
+                                            <h1>My Shop</h1>
+                                            <table style="width: 100%" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Shop Name</th>
+                                                        <th scope="col">Shop Location</th>
+                                                        <th scope="col">Shop's Phone</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="table-warning">
+                                                        <th scope='row'>$shop_name</th>
+                                                        <td>$shop_city</td>
+                                                        <td>$shop_phone</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            
+                                            <form action="updateShop.php" method="post">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon1">Per Mask Price</span>
+                                                    <input type="text" class="form-control" name="per_mask_price" placeholder="$per_mask_price" aria-label="per_mask_price" aria-describedby="basic-addon1">
+                                                    <input type="hidden" name="shop_id" value="$shop_id">
+                                                    <button class="btn btn-lg btn-success" type="submit">Edit</button>
+                                                </div>
+                                            </form>
+                                            <form action="updateShop.php" method="post">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon2">Mask Amount</span>
+                                                    <input type="text" class="form-control" name="stock_quantity" placeholder="$stock_quantity" aria-label="stock_quantity" aria-describedby="basic-addon1">
+                                                    <input type="hidden" name="shop_id" value="$shop_id">
+                                                    <button class="btn btn-lg btn-info" type="submit">Edit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        EOT;
+                                    
+                                    $query = $connection->prepare("select A.staff_id, B.account, B.phone_number, B.full_name, B.city
+                                                                from shop_staffs A join users B on A.staff_id = B.user_id 
+                                                                where A.shop_id = " . $shop_id . " and isMaster = false");
+                                    $query->execute();
+                                    
+                                    echo<<<EOT
+                                        <div class="card profile">
+                                            <h1>Employee</h1>
+                                            <form action="updateShop.php" method="post">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon3">Type account</span>
+                                                    <input type="text" class="form-control" name="staff_userName" placeholder="Type account" aria-label="stock_quantity" aria-describedby="basic-addon1">
+                                                    <input type="hidden" name="shop_id" value="$shop_id">
+                                                    <button class="btn btn-lg btn-secondary" type="submit">Add</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        EOT;
+                                    echo<<<EOT
+                                        <div class="card profile">
+                                            <table style="width: 100%" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Account</th>
+                                                        <th scope="col">Full Name</th>
+                                                        <th scope="col">Phone</th>
+                                                        <th scope="col">Operation</th>
+                                                    </tr>
+                                                </thead>
+                                        EOT;
+                                        $i = 0;
+                                    while ($row = $query->fetch()) {
+                                        $j = $i + 1;
+                                        $staff_id = $row[0];
+                                        $staff_userName = $row[1]; $staff_phone = $row[2]; 
+                                        $staff_fullName = $row[3]; $staff_city = $row[4];
+                                        $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
+                                        echo<<<EOT
+                                                <tbody>
+                                                    <tr class="$className">
+                                                        <th scope='row'>$staff_userName</th>
+                                                        <td>$staff_fullName</td>
+                                                        <td>$staff_phone</td>
+                                                        <td>
+                                                            <form action="updateShop.php" method="post">
+                                                                <input type="hidden" name="shop_id" value="$shop_id">
+                                                                <button class="btn btn-sm btn-danger" type="submit" name="staff_id" value="$staff_id">Delete</button><br>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            EOT;
+                                        $i++;
+                                    }
+                                    echo<<<EOT
+                                            </table>
+                                        </div>
+                                    EOT;
+                                }
+                            }
+                            catch(Exception $e) {
+                                $msg = $e->getMessage();
+                                echo <<<EOT
+                                    <!DOCTYPE html>
+                                    <html>
+                                        <body>
+                                            <script>
+                                                alert("$msg");
+                                                window.location.replace("userPage.php");
+                                            </script>
+                                        </body>
+                                    </html>
                                 EOT;
                             }
-                        }
-                        catch(Exception $e) {
-                            $msg = $e->getMessage();
-                            echo <<<EOT
-                                <!DOCTYPE html>
-                                <html>
-                                    <body>
-                                        <script>
-                                            alert("$msg");
-                                            window.location.replace("userPage.php");
-                                        </script>
-                                    </body>
-                                </html>
-                            EOT;
-                        }
-                    ?>
-                        
+                        ?>
+                    </div>   
                     <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
