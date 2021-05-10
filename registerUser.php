@@ -4,6 +4,25 @@ $_SESSION['Authenticated'] = false;
 include "db_connection.php";
 
 try {
+    if (isset($_REQUEST['checkAccount'])) {
+        $acc = $_REQUEST['checkAccount'];
+        $query = $connection->prepare("select account from users where account = :acc");
+        $query->execute(array('acc' => $acc));
+        if ($query->rowCount() == 0) {
+            echo 'YES'; 
+        }
+        else {
+            echo 'NO'; 
+        }
+    }
+    exit();
+}
+catch (Exception $e) {
+    echo 'Failed';
+    exit();
+}
+
+try {
     if (!isset($_POST['account']) || !isset($_POST['pwd']) || !isset($_POST['re_pwd']) 
         || !isset($_POST['full_name']) || !isset($_POST['phone'])|| !isset($_POST['city'])) 
     {
