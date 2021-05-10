@@ -39,10 +39,10 @@ try {
     $stock_quantity = $_POST['stock_quantity'];
     $shop_phone = $_POST['shop_phone'];
     
-    // if (!is_numeric($pre_mask_price) || (int)$pre_mask_price != $pre_mask_price || $pre_mask_price < 0)
-    //     throw new Exception('Mask price should be non-negative integer!');
-    // if (!is_numeric($stock_quantity) || (int)$stock_quantity != $stock_quantity || $stock_quantity < 0)
-    //     throw new Exception('Stock quantity should be non-negative integer!');
+    if ($pre_mask_price < 0)
+        throw new Exception('Mask price should be non-negative integer!');
+    if ($stock_quantity < 0)
+        throw new Exception('Stock quantity should be non-negative integer!');
 
     $query = $connection->prepare('select * from shops where shop_name = :shop_name');
     $query->execute(array('shop_name' => $shop_name));
