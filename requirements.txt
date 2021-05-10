@@ -2,5 +2,6 @@
     User register page:
         Account, Password上方列出輸入格式提示: Combination of upper/lower-case characters and digits, length: 4 - 20
         Account, Password, Comfirmed Password, Phone Number輸入空顯示提示: *Input required!
+        Full Name只輸入空白不能通過
         Account access DB check username是否重複, 重複顯示: Account has been registered!
         City格子太小

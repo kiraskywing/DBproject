@@ -1,8 +1,11 @@
 <?php
-    session_start(); 
+    session_start();
+    if (isset($_SESSION['accountIsRepeat'])) {
+        $accountIsRepeat = $_SESSION['accountIsRepeat'];
+    }
     session_unset();   # remove all session variables
     session_destroy(); # destroy the session
-    $_SESSION['Authenticated']=false;
+    $_SESSION['Authenticated'] = false;
     include "parameters.php";
 ?>
 
@@ -199,6 +202,35 @@
                         if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
+
+                function check_name(uname) {
+                    if (uname != "") {
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            var message;
+                            if (this.readyState == 4 && this.status == 200) {
+                                switch(this.responseText) { 
+                                    case 'YES':
+                                        message='The account is available.';
+                                        break; 
+                                    case 'NO':
+                                        message='The account has been registered!';
+                                        break;
+                                    default:
+                                        message='Oops. There is something wrong.';
+                                        break; 
+                                }
+                                document.getElementById("msg").innerHTML = message; 
+                            }
+                        };
+                        xhttp.open("POST", "registerUser.php", true); 
+                        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+                        xhttp.send("checkAccount="+uname);
+                    }
+                    else {
+                        document.getElementById("msg").innerHTML = "";
+                    }
+                }
             </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -237,31 +269,32 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input onchange="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT')" type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT')" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
                             <div id="account-notice" class="place-right">*Invalid format</div>
+                            <input onchange="check_name(this.value)" type="text" name="uname"><label id="msg"></label><br>
                         </div>
                         
                         <div class="form-floating">
-                            <input onchange="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
+                            <input oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
                             <div id="password-notice" class="place-right">*Invalid format</div>
                         </div>
 
                         <div class="form-floating">
-                            <input onchange="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
+                            <input oninput="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
                             <label for="re_password">Confirm Password</label>
                             <div id="confirm-password-notice" class="place-right">*Comfirmed password mismatch!</div>
                         </div>
 
                         <div class="form-floating">
-                            <input onchange="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
+                            <input oninput="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
                             <label for="full_name">Full Name</label>
                             <div id="full-name-notice" class="place-right">*Input required!</div>
                         </div>
                         
                         <div class="form-floating">
-                            <input onchange="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
+                            <input oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
                             <div id="phone-notice" class="place-right">*Invalid format (should be exactly 10 digits)</div>
                         </div>
