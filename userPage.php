@@ -204,6 +204,8 @@
                     xhttp.send("checkShop="+element);
                 } else {
                     inputStates.SHOP_NAME = false;
+                    document.getElementById("shop-name-notice").innerHTML = 'You should fill in shop name!';
+                    showNotice('shop-name-notice');
                     disableRegisterButton();
                 }
             }
@@ -313,7 +315,7 @@
                                         <div class="form-floating">
                                             <input required oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
                                             <label for="shop_name">Shop Name</label>
-                                            <div id="shop-name-notice" class="place-right">You should fill shop name</div>
+                                            <div id="shop-name-notice" class="place-right"></div>
                                         </div>
                                     EOT;
                                     
@@ -328,27 +330,26 @@
                                     
                                     echo<<<EOT
                                                 </select>
-                                            <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                                         </div>
                                     EOT;
                                     
                                     echo<<<EOT
                                         <div class="form-floating">
-                                            <input required min="0" onchange="handleChangeMaskPrice(this)" type="number" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
+                                            <input required min="0" oninput="handleChangeMaskPrice(this)" type="number" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
                                             <label for="pre_mask_price">Mask Price</label>
                                             <div id="mask-price-notice" class="place-right">Mask price must be postive integer</div>
                                         </div>
                                     
                                         <div class="form-floating">
-                                            <input required min="0" onchange="handleChangeMaskAmount(this)" type="number" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
+                                            <input required min="0" oninput="handleChangeMaskAmount(this)" type="number" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
                                             <label for="stock_quantity">Mask Amount</label>
                                             <div id="mask-amount-notice" class="place-right">Mask Amount must be postive integer</div>
                                         </div>
                                         
                                         <div class="form-floating">
-                                            <input required onchange="handleChangeShopsPhoneNumber(this)" type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
+                                            <input required oninput="handleChangeShopsPhoneNumber(this)" type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
                                             <label for="shop_phone">Shop's Phone Number</label>
-                                            <div id="shops-phone-number-notice" class="place-right">You should fill shop's phone number</div>
+                                            <div id="shops-phone-number-notice" class="place-right">You should fill in exactly 10 digits!</div>
                                         </div>
                 
                                         <button id="register-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
