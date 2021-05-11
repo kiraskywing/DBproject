@@ -155,7 +155,7 @@
                 function confirmAccountOrPassword(element, noticeElementId, inputStatusKey) {
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
                     if (!passwordTester.test(element.value)) {
-                        document.getElementById(noticeElementId).innerHTML = '*Invalid format';
+                        document.getElementById(noticeElementId).innerHTML = '*Invalid format (Only upper/lower-case characters and digits are allowed, total length: 4 - 20)';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
                         displayImageState[inputStatusKey] = false;
@@ -271,7 +271,6 @@
                             <label for="account">Account</label>
                             <div id="account-notice" class="place-right">*Invalid format</div>
                         </div>
-                        <label id="msg"></label><br>
                         
                         <div class="form-floating">
                             <input required oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
@@ -294,7 +293,7 @@
                         <div class="form-floating">
                             <input required oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">*Invalid format (should be exactly 10 digits)</div>
+                            <div id="phone-notice" class="place-right">*Invalid format (Should be exactly 10 digits)</div>
                         </div>
 
                         <div class="form-floating">
@@ -305,7 +304,6 @@
                                         echo "<option value=\"" . $city . "\">" . $city . "</option>";
                                 ?>
                             </select>
-                            <div id="city-of-residence-notice" class="place-right">City of residence 不能為空</div>
                         </div>
                         
                         <button id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
