@@ -38,30 +38,30 @@
             $isShopStaff = isset($_POST['isShopStaff']) ? $_POST['isShopStaff'] : 0;
 
             $conditions = array();
-            if (empty($shop_name) && empty($shop_city) && empty($min_price) && empty($max_price) && $amount == -1 && $isShopStaff == 0) {
+            if (empty($shop_name) && empty($shop_city) && !is_numeric($min_price) && !is_numeric($max_price) && $amount == -1 && $isShopStaff == 0) {
                 $sql_stmt = 'select * from shops';
             }
             else {
                 $conditions['shop_name'] = '%' . strtolower($shop_name). '%';
                 $conditions['shop_city'] = '%' . strtolower($shop_city). '%';
-                if (!empty($min_price)) {
-                    // if ($min_price < 0 || !is_int($min_price))
-                    //     throw new Exception("Price should be non-negative integer");
+                if (is_numeric($min_price)) {
+                    if ($min_price < 0)
+                        throw new Exception("Price must be non-negative integer");
                     $conditions['min_price'] = $min_price;
                 }
-                if (!empty($max_price)) {
-                    // if ($max_price < 0 || !is_int($min_price))
-                    //     throw new Exception("Price should be non-negative integer");
+                if (is_numeric($max_price)) {
+                    if ($max_price < 0)
+                        throw new Exception("Price must be non-negative integer");
                     $conditions['max_price'] = $max_price;
                 }
 
                 $sql_stmt = 'select * from shops where (lower(shop_name) like :shop_name) and (city like :shop_city)';
 
-                if (!empty($min_price) && !empty($max_price))
+                if (is_numeric($min_price) && is_numeric($max_price))
                     $sql_stmt .= 'and (per_mask_price between :min_price and :max_price)';
-                else if (!empty($min_price))
+                else if (is_numeric($min_price))
                     $sql_stmt .= 'and per_mask_price >= :min_price';
-                else if (!empty($max_price))
+                else if (is_numeric($max_price))
                     $sql_stmt .= 'and per_mask_price <= :max_price';
 
                 if ($amount == 0)

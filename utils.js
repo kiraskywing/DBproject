@@ -1,4 +1,4 @@
-function isPositiveInteger(value) {
+function isNonNegativeInteger(value) {
   const floatValue = parseFloat(value);
   return (
     (floatValue >= 0)

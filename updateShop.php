@@ -3,27 +3,19 @@ include "authentication.php";
 
 try {
     if (isset($_POST['per_mask_price'])) {
-        if (!empty($_POST['per_mask_price'])) {
-            $per_mask_price = $_POST['per_mask_price'];
-            if ($per_mask_price < 0) 
-                throw new Exception("Mask price should be non-negative integer!");
-            $query = $connection->prepare('update shops set per_mask_price = :per_mask_price where shop_id = ' . $_POST['shop_id']);
-            $query->execute(array('per_mask_price' => $per_mask_price));
-        }
-        else
-            throw new Exception('No updated mask price!');
+        $per_mask_price = $_POST['per_mask_price'];
+        if (!is_numeric($per_mask_price) || $per_mask_price < 0) 
+            throw new Exception("Mask price must be non-negative integer!");
+        $query = $connection->prepare('update shops set per_mask_price = :per_mask_price where shop_id = ' . $_POST['shop_id']);
+        $query->execute(array('per_mask_price' => $per_mask_price));
     }
     
     if (isset($_POST['stock_quantity'])) {
-        if (!empty($_POST['stock_quantity'])) {
-            $stock_quantity = $_POST['stock_quantity'];
-            if ($stock_quantity < 0) 
-                throw new Exception("Mask amount should be non-negative integer!");
-            $query = $connection->prepare('update shops set stock_quantity = :stock_quantity where shop_id = ' . $_POST['shop_id']);
-            $query->execute(array('stock_quantity' => $stock_quantity));
-        }
-        else
-            throw new Exception('No updated mask amount!');
+        $stock_quantity = $_POST['stock_quantity'];
+        if (!is_numeric($stock_quantity) || $stock_quantity < 0) 
+            throw new Exception("Mask amount must be non-negative integer!");
+        $query = $connection->prepare('update shops set stock_quantity = :stock_quantity where shop_id = ' . $_POST['shop_id']);
+        $query->execute(array('stock_quantity' => $stock_quantity));
     }
     
     if (isset($_POST['staff_userName'])) {
