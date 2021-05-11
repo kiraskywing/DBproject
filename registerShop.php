@@ -27,11 +27,6 @@ try {
         header("Location: userPage.php");
         exit();
     }
-    if (empty($_POST['shop_name']) || empty($_POST['shop_city']) || empty($_POST['pre_mask_price']) 
-        || empty($_POST['stock_quantity']) || empty($_POST['shop_phone'])) 
-    {
-        throw new Exception('Please input all information.');
-    }
 
     $shop_name = $_POST['shop_name'];
     $shop_city = $_POST['shop_city'];
@@ -39,10 +34,10 @@ try {
     $stock_quantity = $_POST['stock_quantity'];
     $shop_phone = $_POST['shop_phone'];
     
-    if ($pre_mask_price < 0)
-        throw new Exception('Mask price should be non-negative integer!');
-    if ($stock_quantity < 0)
-        throw new Exception('Stock quantity should be non-negative integer!');
+    if (!is_numeric($pre_mask_price) || $pre_mask_price < 0)
+        throw new Exception('Mask price must be non-negative integer!');
+    if (!is_numeric($stock_quantity) || $stock_quantity < 0)
+        throw new Exception('Stock quantity must be non-negative integer!');
 
     $query = $connection->prepare('select * from shops where shop_name = :shop_name');
     $query->execute(array('shop_name' => $shop_name));

@@ -267,7 +267,7 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input required oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input required onchange="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
                             <div id="account-notice" class="place-right">*Invalid format</div>
                         </div>
@@ -293,7 +293,7 @@
                         <div class="form-floating">
                             <input required oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">*Invalid format (Should be exactly 10 digits)</div>
+                            <div id="phone-notice" class="place-right">*Invalid format (Must be exactly 10 digits)</div>
                         </div>
 
                         <div class="form-floating">
