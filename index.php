@@ -139,6 +139,7 @@
                 // validate functions.
                 function isRequired(element, noticeElementId, inputStatusKey) {
                     if (element.value.length === 0) {
+                        document.getElementById(noticeElementId).innerHTML = 'Input required!';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
                         displayImageState[inputStatusKey] = false;
@@ -153,6 +154,11 @@
                     }
                 }
                 function confirmAccountOrPassword(element, noticeElementId, inputStatusKey) {
+                    if (element.value.length === 0) {
+                        isRequired(element, noticeElementId, inputStatusKey);
+                        return;
+                    }
+                    
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
                     if (!passwordTester.test(element.value)) {
                         document.getElementById(noticeElementId).innerHTML = '*Invalid format (Only upper/lower-case characters and digits are allowed, total length: 4 - 20)';
@@ -171,6 +177,11 @@
                     }
                 }
                 function doubleCheckPassword(element, inputStatusKey) {
+                    if (element.value.length === 0) {
+                        isRequired(element, 'confirm-password-notice', inputStatusKey);
+                        return;
+                    }
+
                     if (element.value !== document.getElementsByClassName('pwd')[0].value) {
                         showNotice('confirm-password-notice');
                         inputStatus[inputStatusKey] = false;
@@ -186,6 +197,11 @@
                     }
                 }
                 function isNumber(element, inputStatusKey) {
+                    if (element.value.length === 0) {
+                        isRequired(element, 'phone-notice', inputStatusKey);
+                        return;
+                    }
+
                     const nonNumberTester = /\D/;                    
                     if (nonNumberTester.test(element.value) || element.value.length !== 10) {
                         showNotice('phone-notice');
@@ -267,7 +283,7 @@
                         <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
 
                         <div class="form-floating">
-                            <input required onchange="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
+                            <input required oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
                             <div id="account-notice" class="place-right">*Invalid format</div>
                         </div>

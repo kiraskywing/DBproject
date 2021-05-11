@@ -128,7 +128,7 @@
                 document.getElementById(idName).classList.remove('show');
             }
             function confirmMinInput(element) {
-                if (element.value && !isPositiveInteger(element.value)) {
+                if (element.value && !isNonNegativeInteger(element.value)) {
                     showNotice('min-price-notice2');
                     disableSubmitButton();
                     return;
@@ -148,7 +148,7 @@
                 }
             }
             function confirmMaxInput(element) {
-                if (element.value && !isPositiveInteger(element.value)) {
+                if (element.value && !isNonNegativeInteger(element.value)) {
                     showNotice('max-price-notice2');
                     disableSubmitButton();
                     return;
@@ -168,51 +168,89 @@
                 }
             }
             function handleEditMaskPrice(element) {
-                if (isPositiveInteger(element.value)) {
+                if (element.value.length === 0) {
+                    document.getElementById('edit-mask-price-notice').innerHTML = 'Input Required!';
+                    showNotice('edit-mask-price-notice');
+                    disableEditPriceButton();
+                    return;
+                }
+                if (isNonNegativeInteger(element.value)) {
                     hideNotice('edit-mask-price-notice');
                     enabledEditPriceButton();
                 } else {
+                    document.getElementById('edit-mask-price-notice').innerHTML = 'Mask price must be non-negative integer';
                     showNotice('edit-mask-price-notice');
                     disableEditPriceButton();
                 }
             }
             function handleEditMaskAmount(element) {
-                if (isPositiveInteger(element.value)) {
+                if (element.value.length === 0) {
+                    document.getElementById('edit-mask-amount-notice').innerHTML = 'Input Required!';
+                    showNotice('edit-mask-amount-notice');
+                    disableEditAmountButton();
+                    return;
+                }
+                if (isNonNegativeInteger(element.value)) {
                     hideNotice('edit-mask-amount-notice');
                     enabledEditAmountButton();
                 } else {
+                    document.getElementById('edit-mask-amount-notice').innerHTML = 'Mask Amount must be non-negative integer';
                     showNotice('edit-mask-amount-notice');
                     disableEditAmountButton();
                 }
             }
             function handleChangeMaskPrice(element) {
-                if (isPositiveInteger(element.value)) {
+                if (element.value.length === 0) {
+                    document.getElementById('mask-price-notice').innerHTML = 'Input Required!';
+                    showNotice('mask-price-notice');
+                    inputStates.MASK_PRICE = false;
+                    disableRegisterButton();
+                    return;
+                }
+                if (isNonNegativeInteger(element.value)) {
                     hideNotice('mask-price-notice');
                     inputStates.MASK_PRICE = true;
                     enabledRegisterButton();
                 } else {
+                    document.getElementById('mask-price-notice').innerHTML = 'Mask price must be non-negative integer';
                     showNotice('mask-price-notice');
                     inputStates.MASK_PRICE = false;
                     disableRegisterButton();
                 }
             }
             function handleChangeMaskAmount(element) {
-                if (isPositiveInteger(element.value)) {
+                if (element.value.length === 0) {
+                    document.getElementById('mask-amount-notice').innerHTML = 'Input Required!';
+                    showNotice('mask-amount-notice');
+                    inputStates.MASK_AMOUNT = false;
+                    disableRegisterButton();
+                    return;
+                }
+                if (isNonNegativeInteger(element.value)) {
                     hideNotice('mask-amount-notice');
                     inputStates.MASK_AMOUNT = true;
                     enabledRegisterButton();
                 } else {
+                    document.getElementById('mask-amount-notice').innerHTML = 'Mask Amount must be non-negative integer';
                     showNotice('mask-amount-notice');
                     inputStates.MASK_AMOUNT = false;
                     disableRegisterButton();
                 }
             }
             function handleChangeShopsPhoneNumber(element) {
+                if (element.value.length === 0) {
+                    document.getElementById('shops-phone-number-notice').innerHTML = 'Input Required!';
+                    showNotice('shops-phone-number-notice');
+                    inputStates.SHOP_PHONE_NUMBER = false;
+                    disableRegisterButton();
+                    return;
+                }
                 if (isCellPhoneNumber(element.value)) {
                     hideNotice('shops-phone-number-notice');
                     inputStates.SHOP_PHONE_NUMBER = true;
                     enabledRegisterButton();
                 } else {
+                    document.getElementById('shops-phone-number-notice').innerHTML = 'You must fill in exactly 10 digits!';
                     showNotice('shops-phone-number-notice');
                     inputStates.SHOP_PHONE_NUMBER = false;
                     disableRegisterButton();
@@ -250,7 +288,7 @@
                     xhttp.send("checkShop="+element);
                 } else {
                     inputStates.SHOP_NAME = false;
-                    document.getElementById("shop-name-notice").innerHTML = 'You must fill in shop name!';
+                    document.getElementById("shop-name-notice").innerHTML = 'Input required!';
                     showNotice('shop-name-notice');
                     disableRegisterButton();
                 }
@@ -315,13 +353,13 @@
                                 </select>
                             </div>
                             <div class="form-floating">
-                                <input onchange="confirmMinInput(this)" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
+                                <input oninput="confirmMinInput(this)" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
                                 <label for="min_price">Minimum Mask Price</label>
                                 <div id="min-price-notice" class="place-right">Minimum Price must be smaller than Maximum Price</div>
                                 <div id="min-price-notice2" class="place-right">Price must be non-negative integer</div>
                             </div>
                             <div class="form-floating">
-                                <input onchange="confirmMaxInput(this)" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
+                                <input oninput="confirmMaxInput(this)" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
                                 <label for="max_price">Maximum Mask Price</label>
                                 <div id="max-price-notice" class="place-right">Minimum Price must be smaller than Maximum Price</div>
                                 <div id="max-price-notice2" class="place-right">Price must be non-negative integer</div>
@@ -361,7 +399,7 @@
                                 <h1 class="h3 mb-3 fw-normal">Register Shop</h1>
         
                                 <div class="form-floating">
-                                    <input required onchange="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
+                                    <input required oninput="checkShopIsRegistered(this.value)" type="text" class="form-control" name="shop_name" id="shop_name" placeholder=" ">
                                     <label for="shop_name">Shop Name</label>
                                     <div id="shop-name-notice" class="place-right"></div>
                                 </div>
@@ -385,19 +423,19 @@
                                 <div class="form-floating">
                                     <input required min="0" oninput="handleChangeMaskPrice(this)" type="number" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
                                     <label for="pre_mask_price">Mask Price</label>
-                                    <div id="mask-price-notice" class="place-right">Mask price must be non-negative integer</div>
+                                    <div id="mask-price-notice" class="place-right"></div>
                                 </div>
                             
                                 <div class="form-floating">
                                     <input required min="0" oninput="handleChangeMaskAmount(this)" type="number" class="form-control" name="stock_quantity" id="stock_quantity" placeholder=" ">
                                     <label for="stock_quantity">Mask Amount</label>
-                                    <div id="mask-amount-notice" class="place-right">Mask Amount must be non-negative integer</div>
+                                    <div id="mask-amount-notice" class="place-right"></div>
                                 </div>
                                 
                                 <div class="form-floating">
                                     <input required oninput="handleChangeShopsPhoneNumber(this)" type="text" class="form-control" name="shop_phone" id="shop_phone" placeholder=" ">
                                     <label for="shop_phone">Shop's Phone Number</label>
-                                    <div id="shops-phone-number-notice" class="place-right">You must fill in exactly 10 digits!</div>
+                                    <div id="shops-phone-number-notice" class="place-right"></div>
                                 </div>
         
                                 <button id="register-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
@@ -443,7 +481,7 @@
                                             <input required min="0" oninput="handleEditMaskPrice(this);" type="number" class="form-control" name="per_mask_price" placeholder="$per_mask_price" aria-label="per_mask_price" aria-describedby="basic-addon1">
                                             <input type="hidden" name="shop_id" value="$shop_id">
                                             <button id="edit-mask-price" class="btn btn-lg btn-success" type="submit">Edit</button>
-                                            <div id="edit-mask-price-notice" class="place-right">Mask price must be non-negative integer</div>
+                                            <div id="edit-mask-price-notice" class="place-right"></div>
                                         </div>
                                     </form>
                                     <form action="updateShop.php" method="post">
