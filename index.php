@@ -65,7 +65,7 @@
                 bottom: 15px;
                 color: red;
                 display: none;
-                width: 250px;
+                width: calc(50vw - 163px);
             }
             .show {
                 display: block;
@@ -81,6 +81,7 @@
         </style>
     </head>
     <body class="text-center">
+        <script src="utils.js"></script>
             <script>
                 // local variable.
                 const inputStatus = {
@@ -138,7 +139,7 @@
                 }
                 // validate functions.
                 function isRequired(element, noticeElementId, inputStatusKey) {
-                    if (element.value.length === 0) {
+                    if (element.value.length === 0 || isWhiteSpaceOnly(element.value)) {
                         document.getElementById(noticeElementId).innerHTML = 'Input required!';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
@@ -158,9 +159,9 @@
                         isRequired(element, noticeElementId, inputStatusKey);
                         return;
                     }
-                    
+
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
-                    if (!passwordTester.test(element.value)) {
+                    if (!passwordTester.test(element.value) || element.value.length > 20) {
                         document.getElementById(noticeElementId).innerHTML = '*Invalid format (Only upper/lower-case characters and digits are allowed, total length: 4 - 20)';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
@@ -226,7 +227,7 @@
                             if (this.readyState == 4 && this.status == 200) {
                                 switch(this.responseText) { 
                                     case 'YES':
-                                        message = 'The account is available.';
+                                        message = '<div style="color:green">The account is available.</div>';
                                         break; 
                                     case 'NO':
                                         message = 'The account has been registered!';
