@@ -256,15 +256,15 @@
                     disableRegisterButton();
                 }
             }
-            function checkShopIsRegistered(element) {
-                if (element) {
+            function checkShopIsRegistered(value) {
+                if (value && !isWhiteSpaceOnly(value)) {
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         var message;
                         if (this.readyState == 4 && this.status == 200) {
                             switch(this.responseText) { 
                                 case 'YES':
-                                    message = 'This shop name is available.';
+                                    message = '<div style="color:green">This shop name is available.</div>';
                                     inputStates.SHOP_NAME = true;
                                     enabledRegisterButton();
                                     break; 
@@ -285,7 +285,7 @@
                     };
                     xhttp.open("POST", "registerShop.php", true); 
                     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
-                    xhttp.send("checkShop="+element);
+                    xhttp.send("checkShop="+value);
                 } else {
                     inputStates.SHOP_NAME = false;
                     document.getElementById("shop-name-notice").innerHTML = 'Input required!';
