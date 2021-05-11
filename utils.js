@@ -19,3 +19,8 @@ function isCellPhoneNumber(value) {
   const nonNumberTester = /\D/;                    
   return !nonNumberTester.test(value) && (value.length === 10);
 }
+
+function isWhiteSpaceOnly(value = '') {
+  const handledValue = value.trim();
+  return handledValue.length === 0;
+}
