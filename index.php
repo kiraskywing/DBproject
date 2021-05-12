@@ -117,16 +117,16 @@
                 function replaceToFailImg() {
                     document.getElementById('login-image').src = './login-fail.jpeg';
                 }
-                // function confirmAllStatus() {
-                //     const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = inputStatus;
-                //     return (
-                //         ACCOUNT
-                //         && PASSWORD
-                //         && CONFIRM_PASSWORD
-                //         && FULL_NAME
-                //         && PHONE
-                //     );
-                // }
+                function confirmAllStatus() {
+                    const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = inputStatus;
+                    return (
+                        ACCOUNT
+                        && PASSWORD
+                        && CONFIRM_PASSWORD
+                        && FULL_NAME
+                        && PHONE
+                    );
+                }
                 function confirmDisplayImageStatus() {
                     const { ACCOUNT, PASSWORD, CONFIRM_PASSWORD, FULL_NAME, PHONE } = displayImageState;
                     return (
@@ -151,7 +151,7 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        enableSubmitButton();
+                        if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
                 function confirmAccountOrPassword(element, noticeElementId, inputStatusKey) {
@@ -162,7 +162,7 @@
 
                     const passwordTester = /[a-zA-Z\d]{4,20}$/;
                     if (!passwordTester.test(element.value) || element.value.length > 20) {
-                        document.getElementById(noticeElementId).innerHTML = '*Invalid format (Only upper/lower-case characters and digits are allowed, total length: 4 - 20)';
+                        document.getElementById(noticeElementId).innerHTML = 'Invalid format!<br>(Only upper/lower-case characters and digits are allowed, total length: 4 - 20)';
                         showNotice(noticeElementId);
                         inputStatus[inputStatusKey] = false;
                         displayImageState[inputStatusKey] = false;
@@ -173,7 +173,7 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        enableSubmitButton();
+                        if (confirmAllStatus()) enableSubmitButton();
                         if (inputStatusKey === 'ACCOUNT') checkAccountIsRegistered(element.value, noticeElementId);
                     }
                 }
@@ -194,7 +194,7 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        enableSubmitButton();
+                        if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
                 function isNumber(element, inputStatusKey) {
@@ -215,7 +215,7 @@
                         inputStatus[inputStatusKey] = true;
                         displayImageState[inputStatusKey] = true;
                         if (confirmDisplayImageStatus()) replaceToNormalImg();
-                        enableSubmitButton();
+                        if (confirmAllStatus()) enableSubmitButton();
                     }
                 }
 
@@ -286,31 +286,31 @@
                         <div class="form-floating">
                             <input required oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
                             <label for="account">Account</label>
-                            <div id="account-notice" class="place-right">*Invalid format</div>
+                            <div id="account-notice" class="place-right"></div>
                         </div>
                         
                         <div class="form-floating">
                             <input required oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
                             <label for="password">Password</label>
-                            <div id="password-notice" class="place-right">*Invalid format</div>
+                            <div id="password-notice" class="place-right"></div>
                         </div>
 
                         <div class="form-floating">
                             <input required oninput="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
                             <label for="re_password">Confirm Password</label>
-                            <div id="confirm-password-notice" class="place-right">*Comfirmed password mismatch!</div>
+                            <div id="confirm-password-notice" class="place-right">Comfirmed password mismatch!</div>
                         </div>
 
                         <div class="form-floating">
                             <input required oninput="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
                             <label for="full_name">Full Name</label>
-                            <div id="full-name-notice" class="place-right">*Input required!</div>
+                            <div id="full-name-notice" class="place-right"></div>
                         </div>
                         
                         <div class="form-floating">
                             <input required oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
                             <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">*Invalid format (Must be exactly 10 digits)</div>
+                            <div id="phone-notice" class="place-right">Invalid format!<br>(Must be exactly 10 digits)</div>
                         </div>
 
                         <div class="form-floating">

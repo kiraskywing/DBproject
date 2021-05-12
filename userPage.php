@@ -87,16 +87,24 @@
         </style>
         <script src="utils.js"></script> 
         <script>
+            const inputStatusForSearch = {
+                MIN_MASK_PRICE: true,
+                MAX_MASK_PRICE: true,
+            };
             const inputStates = {
                 SHOP_NAME: false,
                 SHOP_PHONE_NUMBER: false,
                 MASK_PRICE: false,
                 MASK_AMOUNT: false,
             };
-            // function confirmAllStateEnable () {
-            //     const { SHOP_NAME, SHOP_PHONE_NUMBER, MASK_PRICE, MASK_AMOUNT } = inputStates;
-            //     return SHOP_NAME && SHOP_PHONE_NUMBER && MASK_PRICE && MASK_AMOUNT;
-            // }
+            function confirmSearchEnable () {
+                const { MIN_MASK_PRICE, MAX_MASK_PRICE } = inputStatusForSearch;
+                return (MIN_MASK_PRICE && MAX_MASK_PRICE);
+            }
+            function confirmAllStateEnable () {
+                const { SHOP_NAME, SHOP_PHONE_NUMBER, MASK_PRICE, MASK_AMOUNT } = inputStates;
+                return (SHOP_NAME && SHOP_PHONE_NUMBER && MASK_PRICE && MASK_AMOUNT);
+            }
             function disableSubmitButton() {
                 document.getElementById('search-button').disabled = true;
             }
@@ -127,44 +135,56 @@
             function hideNotice(idName) {
                 document.getElementById(idName).classList.remove('show');
             }
-            function confirmMinInput(element) {
+            function confirmMinInput(element, inputStatusKey) {
                 if (element.value && !isNonNegativeInteger(element.value)) {
-                    showNotice('min-price-notice2');
+                    inputStatusForSearch[inputStatusKey] = false;
+                    document.getElementById('min-price-notice').innerHTML = 'Price must be non-negative integer!';
+                    showNotice('min-price-notice');
                     disableSubmitButton();
                     return;
                 } else {
-                    hideNotice('min-price-notice2');
-                    enableSubmitButton();
+                    inputStatusForSearch[inputStatusKey] = true;
+                    hideNotice('min-price-notice');
+                    if (confirmSearchEnable()) enableSubmitButton();
                 }
                 if (!Boolean(document.getElementById('max_price').value)) return;
                 if (element.value && (element.value > document.getElementById('max_price').value)) {
-                    hideNotice('min-price-notice2');
+                    inputStatusForSearch[inputStatusKey] = false;
+                    document.getElementById('min-price-notice').innerHTML = 'Minimum Price must be smaller than Maximum Price!';
                     showNotice('min-price-notice');
                     disableSubmitButton();
                 } else {
-                    hideNotice('min-price-notice');
-                    hideNotice('max-price-notice');
-                    enableSubmitButton();
+                    inputStatusForSearch['MAX_MASK_PRICE'] = (document.getElementById('max_price').value >= 0 ? true : false);
+                    inputStatusForSearch['MIN_MASK_PRICE'] = (element.value >= 0 ? true : false);
+                    if (element.value >= 0) hideNotice('min-price-notice');
+                    if (document.getElementById('max_price').value >= 0 ) hideNotice('max-price-notice');
+                    if (confirmSearchEnable()) enableSubmitButton();
                 }
             }
-            function confirmMaxInput(element) {
+            function confirmMaxInput(element, inputStatusKey) {
                 if (element.value && !isNonNegativeInteger(element.value)) {
-                    showNotice('max-price-notice2');
+                    inputStatusForSearch[inputStatusKey] = false;
+                    document.getElementById('max-price-notice').innerHTML = 'Price must be non-negative integer!';
+                    showNotice('max-price-notice');
                     disableSubmitButton();
                     return;
                 } else {
-                    hideNotice('max-price-notice2');
-                    enableSubmitButton();
+                    inputStatusForSearch[inputStatusKey] = true;
+                    hideNotice('max-price-notice');
+                    if (confirmSearchEnable()) enableSubmitButton();
                 }
                 if (!Boolean(document.getElementById('min_price').value)) return;
                 if (element.value && (element.value < document.getElementById('min_price').value)) {
-                    hideNotice('max-price-notice2');
+                    inputStatusForSearch[inputStatusKey] = false;
+                    document.getElementById('max-price-notice').innerHTML = 'Maximum Price must be greater than Minimum Price!';
                     showNotice('max-price-notice');
                     disableSubmitButton();
                 } else {
-                    hideNotice('min-price-notice');
-                    hideNotice('max-price-notice');
-                    enableSubmitButton();
+                    inputStatusForSearch['MAX_MASK_PRICE'] = (element.value >= 0 ? true : false);
+                    inputStatusForSearch['MIN_MASK_PRICE'] = (document.getElementById('min_price').value >= 0 ? true : false);
+                    if (document.getElementById('min_price').value >= 0 ) hideNotice('min-price-notice');
+                    if (element.value >= 0) hideNotice('max-price-notice');
+                    if (confirmSearchEnable()) enableSubmitButton();
                 }
             }
             function handleEditMaskPrice(element) {
@@ -353,16 +373,14 @@
                                 </select>
                             </div>
                             <div class="form-floating">
-                                <input oninput="confirmMinInput(this)" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
+                                <input oninput="confirmMinInput(this, 'MIN_MASK_PRICE')" min="0" type="number" class="form-control" name="min_price" id="min_price" placeholder="please input min of price">
                                 <label for="min_price">Minimum Mask Price</label>
-                                <div id="min-price-notice" class="place-right">Minimum Price must be smaller than Maximum Price</div>
-                                <div id="min-price-notice2" class="place-right">Price must be non-negative integer</div>
+                                <div id="min-price-notice" class="place-right"></div>
                             </div>
                             <div class="form-floating">
-                                <input oninput="confirmMaxInput(this)" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
+                                <input oninput="confirmMaxInput(this, 'MAX_MASK_PRICE')" min="0" type="number" class="form-control" name="max_price" id="max_price" placeholder="please input max of price">
                                 <label for="max_price">Maximum Mask Price</label>
-                                <div id="max-price-notice" class="place-right">Minimum Price must be smaller than Maximum Price</div>
-                                <div id="max-price-notice2" class="place-right">Price must be non-negative integer</div>
+                                <div id="max-price-notice" class="place-right"></div>
                             </div>
                             <div class="form-floating">
                                 <div class="select-label">Amount</div>
@@ -381,7 +399,6 @@
                             <button id="search-button" class="login-button btn btn-lg btn-success" type="submit">Search</button>
                         </form>
                     </div>
-                    <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                 </main>
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -441,7 +458,6 @@
                                 <button id="register-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                                 </form>
                                 </div>   
-                                <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
                             </main>
                             EOT;
                         }
@@ -553,8 +569,7 @@
                             echo<<<EOT
                                     </table>
                                 </div>
-                                </div>   
-                                <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
+                                </div>
                             EOT;
                         }
                     }
@@ -574,6 +589,7 @@
                     }
                 ?>
             </div>
+            <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW2 demo</p>
         </div>
     </body>
 </html>
