@@ -8,9 +8,54 @@
             <!-- JavaScript Bundle with Popper -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
+            <style>
+                .place-right {
+                    position: absolute;
+                    left: 350px;
+                    bottom: 15px;
+                    color: red;
+                    display: none;
+                    width: 400px;
+                }
+                .show {
+                    display: block;
+                }
+            </style>
+            <script src="utils.js"></script> 
             <script>
                 function handleSubmit(element, type) {
                     document.getElementById(type).click(); 
+                }
+                function enableCreateOrderButton(idName) {
+                    document.getElementById(idName).disabled = false;
+                }
+                function disableCreateOrderButton(idName) {
+                    document.getElementById(idName).disabled = true;
+                }
+                function showNotice(idName) {
+                    document.getElementById(idName).classList.add('show');
+                }
+                function hideNotice(idName) {
+                    document.getElementById(idName).classList.remove('show');
+                }
+                function handleOrderMaskAmount(element, index) {
+                    var idButton = 'create-order-' + index;
+                    var idNotice = 'create-order-notice-' + index;
+                    if (element.value.length == 0) {
+                        console.log(idButton, idNotice);
+                        document.getElementById(idNotice).innerHTML = 'Input Required!';
+                        showNotice(idNotice);
+                        disableCreateOrderButton(idButton);
+                        return;
+                    }
+                    if (isPositive(element.value)) {
+                        hideNotice(idNotice);
+                        enableCreateOrderButton(idButton);
+                    } else {
+                        document.getElementById(idNotice).innerHTML = 'Must be positive integer!';
+                        showNotice(idNotice);
+                        disableEditPriceButton(idButton);
+                    }
                 }
             </script>
         </head>
@@ -112,8 +157,7 @@
             echo '<li class="page-item"> <a class="page-link" href=\'searchShop.php?page=' . $page - 1 . '\'" tabindex="-1" aria-disabled="true">Previous</a></li>';
 
         // item
-        for ($i = 1; $i <= $_SESSION['totalPages']; $i++)
-        {
+        for ($i = 1; $i <= $_SESSION['totalPages']; $i++) {
             if ($i == $page) {
                 echo "<li class='page-item active'><a class='page-link'>$i</a></li>";
             } else {
@@ -174,6 +218,9 @@
                                     <button id="shop-phone-trigger" style="display: none;" type="submit" name="shopPhone" value="1">Phone Number</button>
                                 </form>
                             </th>
+                            <th scope="col">
+                                Make Order
+                            </th>
                         </tr>
                     </thead>
             EOT;
@@ -189,9 +236,17 @@
                 '<td>' . $_SESSION['shopCities'][$_SESSION['order'][$i]]  . '</td>' .
                 '<td>' . $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]] . '</td>' .
                 '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
-                '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>' ;
-
+                '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>';
+            
             echo<<<EOT
+                        <td>
+                            <form action="createOrder.php" method="post">
+                                <input required min="1" oninput="handleOrderMaskAmount(this, $j)" type="number" name="maskAmount" placeholder=0>
+                                <input type="hidden">
+                                <button id="create-order-$j" class="" type="submit">Buy!</button>
+                                <div id="create-order-notice-$j" class=""></div>
+                            </form>
+                        </td>
                     </tr>
                 </tbody>
             EOT;

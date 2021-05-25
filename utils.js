@@ -8,7 +8,7 @@ function isNonNegativeInteger(value) {
 
 function isPositive(value) {
   const numberValue = parseFloat(value);
-  return (numberValue >= 0);
+  return (numberValue > 0 && Number.isInteger(numberValue));
 }
 
 function hasValue(value) {
