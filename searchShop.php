@@ -247,7 +247,7 @@
             $amountLimit = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
             echo<<<EOT
                         <td>
-                            <form action="createOrder.php" method="post">
+                            <form action="manageOrders.php" method="post">
                                 <input required min="1" oninput="handleOrderMaskAmount(this, $j, $amountLimit)" type="number" name="maskAmount" placeholder=0>
                                 <input type="hidden">
                                 <button id="create-order-$j" class="" type="submit">Buy!</button>
@@ -261,7 +261,7 @@
         echo<<<EOT
                 </table>
             </div>
-            <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back</button>
+            <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back to Home</button>
         EOT;
     }
 

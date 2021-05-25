@@ -1,9 +1,5 @@
-<?php
-    session_start();
-    session_unset();   # remove all session variables
-    session_destroy(); # destroy the session
-    $_SESSION['Authenticated'] = false;
-    include "parameters.php";
+<?php 
+    include "authentication.php";
 ?>
 
 <!DOCTYPE html>
@@ -249,18 +245,34 @@
             </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Login</button>
+                    <button class="nav-link" id="back-tab" data-bs-toggle="tab" type="button" 
+                            onClick="window.location.replace('userPage.php');">Home
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Register</button>
+                    <button class="nav-link" id="shop-tab" data-bs-toggle="tab" type="button" 
+                            onClick="window.location.replace('shop.php');">Shop
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="back-tab" data-bs-toggle="tab" type="button" 
+                            onClick="window.location.replace('myOrder.php');">My Order
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Shop Order</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="logout-tab" data-bs-toggle="tab" type="button" 
+                            onClick="alert('Logout Success!'); window.location.replace('index.php');">Logout
+                    </button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <main class="form-signin">
                     <form action="login.php" method="post">
-                        <img src="./login.png" alt="" height="120" width="108">
-                        <h1 class="h3 mb-3 fw-normal">Please Login</h1>
+                        <h1 class="h3 mb-3 fw-normal">Shop Order</h1>
 
                         <div class="form-floating">
                             <input type="text" class="form-control" name="account" id="account" placeholder="Your account">
@@ -273,57 +285,6 @@
                         </div>
 
                         <button class="login-button w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW3 demo</p>
-                    </form>
-                </main>
-            </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <main class="form-signin">
-                    <form action="registerUser.php" method="post">
-                        <img id="login-image" src="./login.png" alt="" height="120" width="108">
-                        <h1 class="h3 mb-3 fw-normal">Create New Account</h1>
-
-                        <div class="form-floating">
-                            <input required oninput="confirmAccountOrPassword(this, 'account-notice', 'ACCOUNT');" type="text" class="form-control" name="account" id="account" placeholder="Your account">
-                            <label for="account">Account</label>
-                            <div id="account-notice" class="place-right"></div>
-                        </div>
-                        
-                        <div class="form-floating">
-                            <input required oninput="confirmAccountOrPassword(this, 'password-notice', 'PASSWORD')" type="password" class="form-control pwd" name="pwd" id="pwd" placeholder="Your password">
-                            <label for="password">Password</label>
-                            <div id="password-notice" class="place-right"></div>
-                        </div>
-
-                        <div class="form-floating">
-                            <input required oninput="doubleCheckPassword(this, 'CONFIRM_PASSWORD')" type="password" class="form-control" name="re_pwd" id="re_pwd" placeholder="Input your password again">
-                            <label for="re_password">Confirm Password</label>
-                            <div id="confirm-password-notice" class="place-right">Comfirmed password mismatch!</div>
-                        </div>
-
-                        <div class="form-floating">
-                            <input required oninput="isRequired(this, 'full-name-notice', 'FULL_NAME')" type="text" class="form-control" name="full_name" id="full_name" placeholder="Your full name">
-                            <label for="full_name">Full Name</label>
-                            <div id="full-name-notice" class="place-right"></div>
-                        </div>
-                        
-                        <div class="form-floating">
-                            <input required oninput="isNumber(this, 'PHONE')" type="text" class="form-control" name="phone" id="phone" placeholder="Your phone number">
-                            <label for="phone">Phone Number</label>
-                            <div id="phone-notice" class="place-right">Invalid format!<br>(Must be exactly 10 digits)</div>
-                        </div>
-
-                        <div class="form-floating">
-                            <div class="select-label">City of Residence</div>
-                            <select class="form-select" name="city">
-                                <?php
-                                    foreach ($cities as $city)
-                                        echo "<option value=\"" . $city . "\">" . $city . "</option>";
-                                ?>
-                            </select>
-                        </div>
-                        
-                        <button id="submit-button" class="login-button w-100 btn btn-lg btn-success" type="submit">Register</button>
                         <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW3 demo</p>
                     </form>
                 </main>
