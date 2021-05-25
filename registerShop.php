@@ -43,6 +43,8 @@ try {
     $query->execute(array('shop_name' => $shop_name));
 
     if ($query->rowCount() == 0) {
+        $connection->beginTransaction();
+
         $query = $connection->prepare("insert into shops (shop_name, city, per_mask_price, stock_quantity, phone_number) 
                                                   values (:shop_name, :shop_city, :pre_mask_price, :stock_quantity, :shop_phone)");
         $query->execute(array('shop_name' => $shop_name, 'shop_city' => $shop_city , 'pre_mask_price' => $pre_mask_price,
@@ -56,6 +58,8 @@ try {
         $shop_id = $row[0];
         $query = $connection->prepare('insert into shop_staffs (staff_id, shop_id, isMaster) values (' . $staff_id . ', ' . $shop_id . ', true)');
         $query->execute();
+        
+        $connection->commit();
                                     
         echo <<<EOT
             <!DOCTYPE html>
@@ -74,6 +78,9 @@ try {
         throw new Exception("Shop name has been registered!");
 }
 catch (Exception $e) {
+    if ($connection->inTransaction())
+        $connection->rollBack();
+    
     $msg=$e->getMessage();
     
     echo <<<EOT
