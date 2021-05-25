@@ -38,23 +38,29 @@
                 function hideNotice(idName) {
                     document.getElementById(idName).classList.remove('show');
                 }
-                function handleOrderMaskAmount(element, index) {
+                function handleOrderMaskAmount(element, index, amountLimit) {
                     var idButton = 'create-order-' + index;
                     var idNotice = 'create-order-notice-' + index;
                     if (element.value.length == 0) {
-                        console.log(idButton, idNotice);
                         document.getElementById(idNotice).innerHTML = 'Input Required!';
                         showNotice(idNotice);
                         disableCreateOrderButton(idButton);
                         return;
                     }
                     if (isPositive(element.value)) {
-                        hideNotice(idNotice);
-                        enableCreateOrderButton(idButton);
+                        if (element.value <= amountLimit) {
+                            hideNotice(idNotice);
+                            enableCreateOrderButton(idButton);
+                        }
+                        else {
+                            document.getElementById(idNotice).innerHTML = "Order quantity shouldn't be greater than stock quantity!";
+                            showNotice(idNotice);
+                            disableCreateOrderButton(idButton);
+                        }
                     } else {
                         document.getElementById(idNotice).innerHTML = 'Must be positive integer!';
                         showNotice(idNotice);
-                        disableEditPriceButton(idButton);
+                        disableCreateOrderButton(idButton);
                     }
                 }
             </script>
@@ -219,7 +225,7 @@
                                 </form>
                             </th>
                             <th scope="col">
-                                Make Order
+                                Order Quantity
                             </th>
                         </tr>
                     </thead>
@@ -238,13 +244,14 @@
                 '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
                 '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>';
             
+            $amountLimit = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
             echo<<<EOT
                         <td>
                             <form action="createOrder.php" method="post">
-                                <input required min="1" oninput="handleOrderMaskAmount(this, $j)" type="number" name="maskAmount" placeholder=0>
+                                <input required min="1" oninput="handleOrderMaskAmount(this, $j, $amountLimit)" type="number" name="maskAmount" placeholder=0>
                                 <input type="hidden">
                                 <button id="create-order-$j" class="" type="submit">Buy!</button>
-                                <div id="create-order-notice-$j" class=""></div>
+                                <div id="create-order-notice-$j" ></div>
                             </form>
                         </td>
                     </tr>
