@@ -8,9 +8,60 @@
             <!-- JavaScript Bundle with Popper -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
+            <style>
+                .place-right {
+                    position: absolute;
+                    left: 350px;
+                    bottom: 15px;
+                    color: red;
+                    display: none;
+                    width: 400px;
+                }
+                .show {
+                    display: block;
+                }
+            </style>
+            <script src="utils.js"></script> 
             <script>
                 function handleSubmit(element, type) {
                     document.getElementById(type).click(); 
+                }
+                function enableCreateOrderButton(idName) {
+                    document.getElementById(idName).disabled = false;
+                }
+                function disableCreateOrderButton(idName) {
+                    document.getElementById(idName).disabled = true;
+                }
+                function showNotice(idName) {
+                    document.getElementById(idName).classList.add('show');
+                }
+                function hideNotice(idName) {
+                    document.getElementById(idName).classList.remove('show');
+                }
+                function handleOrderMaskAmount(element, index, amountLimit) {
+                    var idButton = 'create-order-' + index;
+                    var idNotice = 'create-order-notice-' + index;
+                    if (element.value.length == 0) {
+                        document.getElementById(idNotice).innerHTML = 'Input Required!';
+                        showNotice(idNotice);
+                        disableCreateOrderButton(idButton);
+                        return;
+                    }
+                    if (isPositive(element.value)) {
+                        if (element.value <= amountLimit) {
+                            hideNotice(idNotice);
+                            enableCreateOrderButton(idButton);
+                        }
+                        else {
+                            document.getElementById(idNotice).innerHTML = "Order quantity shouldn't be greater than stock quantity!";
+                            showNotice(idNotice);
+                            disableCreateOrderButton(idButton);
+                        }
+                    } else {
+                        document.getElementById(idNotice).innerHTML = 'Must be positive integer!';
+                        showNotice(idNotice);
+                        disableCreateOrderButton(idButton);
+                    }
                 }
             </script>
         </head>
@@ -76,6 +127,7 @@
             }
 
             $i = 0;
+            $_SESSION['shopIds'] = array();
             $_SESSION['shopNames'] = array();
             $_SESSION['shopCities'] = array();
             $_SESSION['shopMaskPrices'] = array();
@@ -85,6 +137,7 @@
             $query->execute($conditions);
 
             while ($row = $query->fetch()) {
+                $_SESSION['shopIds'][$i] = $row['shop_id'];
                 $_SESSION['shopNames'][$i] = $row['shop_name'];
                 $_SESSION['shopCities'][$i] = $row['city'];
                 $_SESSION['shopMaskPrices'][$i] = $row['per_mask_price'];
@@ -112,8 +165,7 @@
             echo '<li class="page-item"> <a class="page-link" href=\'searchShop.php?page=' . $page - 1 . '\'" tabindex="-1" aria-disabled="true">Previous</a></li>';
 
         // item
-        for ($i = 1; $i <= $_SESSION['totalPages']; $i++)
-        {
+        for ($i = 1; $i <= $_SESSION['totalPages']; $i++) {
             if ($i == $page) {
                 echo "<li class='page-item active'><a class='page-link'>$i</a></li>";
             } else {
@@ -174,32 +226,49 @@
                                     <button id="shop-phone-trigger" style="display: none;" type="submit" name="shopPhone" value="1">Phone Number</button>
                                 </form>
                             </th>
+                            <th scope="col">
+                                Order Quantity
+                            </th>
                         </tr>
                     </thead>
             EOT;
         $i = 0 + $listsPerPage * ($page - 1);
         for ($j = 0; $j < $showLists; $i++, $j++) {
             $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
-            echo<<<EOT
-                <tbody>
-                    <tr class="$className">
-            EOT;
 
-            echo '<th scope="row">' . $_SESSION['shopNames'][$_SESSION['order'][$i]] . '</th>' .
-                '<td>' . $_SESSION['shopCities'][$_SESSION['order'][$i]]  . '</td>' .
-                '<td>' . $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]] . '</td>' .
-                '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
-                '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>' ;
+            $shop_id = $_SESSION['shopIds'][$_SESSION['order'][$i]];
+            $shop_name = $_SESSION['shopNames'][$_SESSION['order'][$i]];
+            $shop_city = $_SESSION['shopCities'][$_SESSION['order'][$i]];
+            $single_price = $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]];
+            $stock_quantity = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
+            $shop_phone = $_SESSION['shopPhones'][$_SESSION['order'][$i]];
 
             echo<<<EOT
-                    </tr>
-                </tbody>
+            <tbody>
+                <tr class="$className">
+                    <th scope="row">$shop_name</th>
+                    <td>$shop_city</td>
+                    <td>$single_price</td>
+                    <td>$stock_quantity</td>
+                    <td>$shop_phone</td>
+                    <td>
+                        <form action="manageOrders.php" method="post">
+                            <input type="hidden" name="createOrder" value="1">
+                            <input type="hidden" name="shop_id" value="$shop_id">
+                            <input type="hidden" name="maskPrice" value="$single_price">
+                            <input required min="1" oninput="handleOrderMaskAmount(this, $j, $stock_quantity)" type="number" name="maskAmount" placeholder=0>
+                            <button id="create-order-$j" class="" type="submit">Buy!</button>
+                            <div id="create-order-notice-$j" ></div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
             EOT;
         }
         echo<<<EOT
                 </table>
             </div>
-            <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back</button>
+            <button style="margin-top: 20px" class="btn btn-primary" type="button" onClick="location.href='userPage.php'">Back to Home</button>
         EOT;
     }
 

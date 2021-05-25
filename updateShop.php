@@ -51,7 +51,7 @@ try {
             <body>
                 <script>
                     alert("Update Success!");
-                    window.location.replace("userPage.php");
+                    window.location.replace("shop.php");
                 </script>
             </body>
         </html>
@@ -66,7 +66,7 @@ catch(exception $e) {
             <body>
                 <script>
                     alert("$msg");
-                    window.location.replace("userPage.php");
+                    window.location.replace("shop.php");
                 </script>
             </body>
         </html>
