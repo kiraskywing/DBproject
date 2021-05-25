@@ -127,6 +127,7 @@
             }
 
             $i = 0;
+            $_SESSION['shopIds'] = array();
             $_SESSION['shopNames'] = array();
             $_SESSION['shopCities'] = array();
             $_SESSION['shopMaskPrices'] = array();
@@ -136,6 +137,7 @@
             $query->execute($conditions);
 
             while ($row = $query->fetch()) {
+                $_SESSION['shopIds'][$i] = $row['shop_id'];
                 $_SESSION['shopNames'][$i] = $row['shop_name'];
                 $_SESSION['shopCities'][$i] = $row['city'];
                 $_SESSION['shopMaskPrices'][$i] = $row['per_mask_price'];
@@ -233,29 +235,34 @@
         $i = 0 + $listsPerPage * ($page - 1);
         for ($j = 0; $j < $showLists; $i++, $j++) {
             $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
-            echo<<<EOT
-                <tbody>
-                    <tr class="$className">
-            EOT;
 
-            echo '<th scope="row">' . $_SESSION['shopNames'][$_SESSION['order'][$i]] . '</th>' .
-                '<td>' . $_SESSION['shopCities'][$_SESSION['order'][$i]]  . '</td>' .
-                '<td>' . $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]] . '</td>' .
-                '<td>' . $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]] . '</td>' .
-                '<td>' . $_SESSION['shopPhones'][$_SESSION['order'][$i]] . '</td>';
-            
-            $amountLimit = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
+            $shop_id = $_SESSION['shopIds'][$_SESSION['order'][$i]];
+            $shop_name = $_SESSION['shopNames'][$_SESSION['order'][$i]];
+            $shop_city = $_SESSION['shopCities'][$_SESSION['order'][$i]];
+            $single_price = $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]];
+            $stock_quantity = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
+            $shop_phone = $_SESSION['shopPhones'][$_SESSION['order'][$i]];
+
             echo<<<EOT
-                        <td>
-                            <form action="manageOrders.php" method="post">
-                                <input required min="1" oninput="handleOrderMaskAmount(this, $j, $amountLimit)" type="number" name="maskAmount" placeholder=0>
-                                <input type="hidden">
-                                <button id="create-order-$j" class="" type="submit">Buy!</button>
-                                <div id="create-order-notice-$j" ></div>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
+            <tbody>
+                <tr class="$className">
+                    <th scope="row">$shop_name</th>
+                    <td>$shop_city</td>
+                    <td>$single_price</td>
+                    <td>$stock_quantity</td>
+                    <td>$shop_phone</td>
+                    <td>
+                        <form action="manageOrders.php" method="post">
+                            <input type="hidden" name="createOrder" value="1">
+                            <input type="hidden" name="shop_id" value="$shop_id">
+                            <input type="hidden" name="maskPrice" value="$single_price">
+                            <input required min="1" oninput="handleOrderMaskAmount(this, $j, $stock_quantity)" type="number" name="maskAmount" placeholder=0>
+                            <button id="create-order-$j" class="" type="submit">Buy!</button>
+                            <div id="create-order-notice-$j" ></div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
             EOT;
         }
         echo<<<EOT

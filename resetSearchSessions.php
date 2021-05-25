@@ -1,4 +1,5 @@
 <?php 
+    if (isset($_SESSION['shopIds'])) unset($_SESSION['shopIds']);
     if (isset($_SESSION['shopNames'])) unset($_SESSION['shopNames']);
     if (isset($_SESSION['shopCities'])) unset($_SESSION['shopCities']);
     if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);

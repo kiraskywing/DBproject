@@ -271,23 +271,126 @@
             <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <main class="form-signin">
-                    <form action="login.php" method="post">
-                        <h1 class="h3 mb-3 fw-normal">My Order</h1>
-
+                    <h1 class="h3 mb-3 fw-normal">My Order</h1>
+                    <form action="myOrder.php" method="post">
                         <div class="form-floating">
-                            <input type="text" class="form-control" name="account" id="account" placeholder="Your account">
-                            <label for="account">Account</label>
+                            <div class="select-label">Status</div>
+                            <select class="form-select" name="status">
+                                <option value="3">All</option>"
+                                <option value="0">Not finished</option>"
+                                <option value="1">Finished</option>"
+                                <option value="2">Cancelled</option>"
+                            </select>
                         </div>
-                        
-                        <div class="form-floating">
-                            <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Your password">
-                            <label for="password">Password</label>
-                        </div>
-
-                        <button class="login-button w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW3 demo</p>
+                        <button class="login-button w-100 btn btn-lg btn-primary" type="submit">Search</button>
                     </form>
                 </main>
+                
+                <div class="card profile">
+                    <table style="width: 100%" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Create Time</th>
+                                <th scope="col">Finish Time</th>
+                                <th scope="col">Shop</th>
+                                <th scope="col">Total Price</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                try {
+                                    $sql_stmt = 'select 
+                                                 A.order_id, A.order_status, A.create_time, B.account, A.finish_time, A.administer_id,
+                                                 D.shop_name, A.purchase_amount, A.purchase_price
+                                                 from orders A 
+                                                 join users B on A.customer_id = B.user_id
+                                                 join shops D on A.shop_id = D.shop_id
+                                                 where A.customer_id = ' . $_SESSION['user_id'];
+                                    
+                                    if (isset($_POST['status']) && $_POST['status'] != 3)
+                                        $sql_stmt .= (' and order_status = ' . $_POST['status']);
+                                    $query = $connection->prepare($sql_stmt);
+                                    $query->execute();
+                                    
+                                    $i = 0;
+                                    while ($row = $query->fetch()) {
+                                        $order_id = $row[0];
+                                        $order_status;
+                                        if ($row[1] == 0) $order_status = 'Not finished';
+                                        else if ($row[1] == 1) $order_status = 'Finished';
+                                        else $order_status = 'Cancelled';
+                                        
+                                        $create_time = $row[2];
+                                        $buyer_account = $row[3];
+                                        $finish_time = (empty($row[4]) ? '-' : $row[4]);
+
+                                        $admin_account;
+                                        if (!empty($row[5])) {
+                                            $query2 = $connection->prepare('select account from users where user_id = ' . $row[5]);
+                                            $query2->execute();
+                                            $admin_account = $query2->fetch()[0];
+                                        }
+                                        else
+                                            $admin_account = '-';
+
+                                        $shop_name = $row[6];
+                                        $amount = $row[7]; 
+                                        $singlePrice = $row[8];
+                                        $total_price = $amount * $singlePrice;
+                                        
+                                        $className = ($i % 2 ? 'table-primary' : 'table-info');
+                                        echo<<<EOT
+                                            <tbody>
+                                            <tr class="$className">
+                                                <th scope="row">$order_id</th>
+                                                <td>$order_status</td>
+                                                <td>$create_time<br>$buyer_account</td>
+                                                <td>$finish_time<br>$admin_account</td>
+                                                <td>$shop_name</td>
+                                                <td>\$$total_price<br>($amount * \$$singlePrice)</td>
+                                        EOT;
+                                        
+                                        if ($row[1] == 0) {
+                                            echo<<<EOT
+                                                    <td>
+                                                        <form action="manageOrders.php" method="post">
+                                                            <button class="" type="submit">Cancel Order</button>
+                                                        </form>
+                                                    </td>
+                                            EOT;
+                                        }
+                                        
+                                        echo<<<EOT
+                                            </tr>
+                                        </tbody>
+                                        EOT;
+                                        $i++;
+                                    }
+                                } 
+                                catch(exception $e) {
+                                    $msg=$e->getMessage();
+                                    echo <<<EOT
+                                    <!DOCTYPE html>
+                                    <html>
+                                        <body>
+                                            <script>
+                                                alert("$msg");
+                                                window.location.replace("userPage.php");
+                                            </script>
+                                        </body>
+                                    </html>
+                                    EOT;
+                                }
+                            ?>
+                            <tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-5 mb-3 text-muted">©2021 For NCTU DB HW3 demo</p>
             </div>
         </div>
     </body>
