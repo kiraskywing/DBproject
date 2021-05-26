@@ -37,30 +37,50 @@ try {
         EOT;
         exit();
     }
-    else if (isset($_POST['cancelOrder']) && isset($_POST['order_id']) && isset($_POST['admin_id'])) {
-        $connection->beginTransaction();
+    else if (isset($_POST['cancelOrder'])) {
+        $orderIds = array();
+        if (isset($_POST['orderIds']))
+            $orderIds = $_POST['orderIds'];
+        else if (isset($_POST['order_id'])) 
+            $orderIds[0] = $_POST['order_id'];
+        else
+            throw new Exception('No order_id!');
         
-        $query = $connection->prepare('select order_status from orders where order_id = ' . $_POST['order_id']);
-        $query->execute();
-
-        $status = $query->fetch()[0];
-        if ($status != 0) {
-            $condition = ($status == 1 ? 'finished' : 'cancelled');
-            throw new Exception('The order has been ' . $condition);
+        $hasFail = false;
+        $failMessage = 'Failed order(s) : \n';
+        foreach($orderIds as $order_id) {
+            $connection->beginTransaction();
+            
+            $query = $connection->prepare('select order_status, customer_id from orders where order_id = ' . $order_id);
+            $query->execute();
+            $row = $query->fetch();
+            $customer_id = $row[1];
+            $status = $row[0];
+            if ($status != 0) {
+                $condition = ($status == 1 ? 'finished' : 'cancelled');
+                $failMessage .= 'Order id ' . $order_id . ' has been ' . $condition . '.\n';
+                $hasFail = true;
+                $connection->commit();
+                continue;
+            }
+    
+            $query = $connection->prepare('update orders set order_status = 2, administer_id = ' . $_SESSION['user_id'] . ' where order_id = ' . $order_id);
+            $query->execute();
+    
+            $connection->commit();
         }
-
-        $query = $connection->prepare('update orders set order_status = 2, administer_id = ' . $_POST['admin_id'] . ' where order_id = ' . $_POST['order_id']);
-        $query->execute();
-
-        $connection->commit();
         
+        if ($hasFail)
+            throw new Exception($failMessage);
+        
+        $dest_page = ($customer_id == $_SESSION['user_id'] ? 'myOrder.php' : 'shopOrder.php');
         echo <<<EOT
             <!DOCTYPE html>
             <html>
                 <body>
                     <script>
                         alert("Cancel Order Success!");
-                        window.location.replace("myOrder.php");
+                        window.location.replace("$dest_page");
                     </script>
                 </body>
             </html>

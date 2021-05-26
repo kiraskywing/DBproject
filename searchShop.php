@@ -41,7 +41,7 @@
                 function handleOrderMaskAmount(element, index, amountLimit) {
                     var idButton = 'create-order-' + index;
                     var idNotice = 'create-order-notice-' + index;
-                    if (element.value.length == 0) {
+                    if (element.value.length === 0) {
                         document.getElementById(idNotice).innerHTML = 'Input Required!';
                         showNotice(idNotice);
                         disableCreateOrderButton(idButton);
