@@ -1,11 +1,12 @@
 <?php 
-    if (isset($_SESSION['shopIds'])) unset($_SESSION['shopIds']);
-    if (isset($_SESSION['shopNames'])) unset($_SESSION['shopNames']);
-    if (isset($_SESSION['shopCities'])) unset($_SESSION['shopCities']);
-    if (isset($_SESSION['shopMaskPrices'])) unset($_SESSION['shopMaskPrices']);
-    if (isset($_SESSION['shopStockQuantities'])) unset($_SESSION['shopStockQuantities']);
-    if (isset($_SESSION['shopPhones'])) unset($_SESSION['shopPhones']); 
-    if (isset($_SESSION['order'])) unset($_SESSION['order']);
+    if (isset($_SESSION['shop_name'])) unset($_SESSION['shop_name']);
+    if (isset($_SESSION['shop_city'])) unset($_SESSION['shop_city']);
+    if (isset($_SESSION['min_price'])) unset($_SESSION['min_price']);
+    if (isset($_SESSION['max_price'])) unset($_SESSION['max_price']);
+    if (isset($_SESSION['amount'])) unset($_SESSION['amount']);
+    if (isset($_SESSION['isShopStaff'])) unset($_SESSION['isShopStaff']);
+    if (isset($_SESSION['sortBy'])) unset($_SESSION['sortBy']);
+    
     if (isset($_SESSION['sortShopName'])) unset($_SESSION['sortShopName']);
     if (isset($_SESSION['sortShopCity'])) unset($_SESSION['sortShopCity']);
     if (isset($_SESSION['sortMaskPrice'])) unset($_SESSION['sortMaskPrice']);

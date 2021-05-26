@@ -70,10 +70,8 @@
     include "authentication.php";
 
     try {
-        $listsPerPage = 5;
-
-        if (!isset($_SESSION['shopNames']) && !isset($_SESSION['shopCities']) && !isset($_SESSION['shopMaskPrices']) 
-         && !isset($_SESSION['shopStockQuantities']) && !isset($_SESSION['shopPhones'])) {
+        if (!isset($_SESSION['shop_name']) && !isset($_SESSION['shop_city']) && !isset($_SESSION['min_price']) && 
+            !isset($_SESSION['max_price']) && !isset($_SESSION['amount']) && !isset($_SESSION['isShopStaff'])) {
             
             if (!isset($_POST['shop_name']) || !isset($_POST['shop_city']) || !isset($_POST['min_price']) 
              || !isset($_POST['max_price']) || !isset($_POST['amount'])) {
@@ -81,79 +79,84 @@
                 exit();
             }
             
-            $shop_name = $_POST['shop_name'];
-            $shop_city = $_POST['shop_city'];
-            $min_price = $_POST['min_price'];
-            $max_price = $_POST['max_price'];
-            $amount = $_POST['amount'];
-            $isShopStaff = isset($_POST['isShopStaff']) ? $_POST['isShopStaff'] : 0;
-
-            $conditions = array();
-            if (empty($shop_name) && empty($shop_city) && !is_numeric($min_price) && !is_numeric($max_price) && $amount == -1 && $isShopStaff == 0) {
-                $sql_stmt = 'select * from shops';
-            }
-            else {
-                $conditions['shop_name'] = '%' . strtolower($shop_name). '%';
-                $conditions['shop_city'] = '%' . strtolower($shop_city). '%';
-                if (is_numeric($min_price)) {
-                    if ($min_price < 0)
-                        throw new Exception("Price must be non-negative integer");
-                    $conditions['min_price'] = $min_price;
-                }
-                if (is_numeric($max_price)) {
-                    if ($max_price < 0)
-                        throw new Exception("Price must be non-negative integer");
-                    $conditions['max_price'] = $max_price;
-                }
-
-                $sql_stmt = 'select * from shops where (lower(shop_name) like :shop_name) and (city like :shop_city)';
-
-                if (is_numeric($min_price) && is_numeric($max_price))
-                    $sql_stmt .= 'and (per_mask_price between :min_price and :max_price)';
-                else if (is_numeric($min_price))
-                    $sql_stmt .= 'and per_mask_price >= :min_price';
-                else if (is_numeric($max_price))
-                    $sql_stmt .= 'and per_mask_price <= :max_price';
-
-                if ($amount == 0)
-                    $sql_stmt .= 'and stock_quantity = 0';
-                else if ($amount == 1)
-                    $sql_stmt .= 'and (stock_quantity between 1 and 499)';
-                else if ($amount == 2)
-                    $sql_stmt .= 'and stock_quantity >= 500';
-
-                if ($isShopStaff == 1)
-                    $sql_stmt .= 'and (shop_id in (select shop_id from shop_staffs where staff_id = ' . $_SESSION['user_id'] . '))';
-            }
-
-            $i = 0;
-            $_SESSION['shopIds'] = array();
-            $_SESSION['shopNames'] = array();
-            $_SESSION['shopCities'] = array();
-            $_SESSION['shopMaskPrices'] = array();
-            $_SESSION['shopStockQuantities'] = array();
-            $_SESSION['shopPhones'] = array();
-            $query = $connection->prepare($sql_stmt);
-            $query->execute($conditions);
-
-            while ($row = $query->fetch()) {
-                $_SESSION['shopIds'][$i] = $row['shop_id'];
-                $_SESSION['shopNames'][$i] = $row['shop_name'];
-                $_SESSION['shopCities'][$i] = $row['city'];
-                $_SESSION['shopMaskPrices'][$i] = $row['per_mask_price'];
-                $_SESSION['shopStockQuantities'][$i] = $row['stock_quantity'];
-                $_SESSION['shopPhones'][$i] = $row['phone_number'];
-                $i++;
-            }
-
-            $_SESSION['totalLists'] = $i;
-            $_SESSION['totalPages'] = ceil($i / $listsPerPage);
+            $_SESSION['shop_name'] = $_POST['shop_name'];
+            $_SESSION['shop_city'] = $_POST['shop_city'];
+            $_SESSION['min_price'] = $_POST['min_price'];
+            $_SESSION['max_price'] = $_POST['max_price'];
+            $_SESSION['amount'] = $_POST['amount'];
+            $_SESSION['isShopStaff'] = isset($_POST['isShopStaff']) ? $_POST['isShopStaff'] : 0;
         }
 
-        if (isset($_GET['page']))
-            $page = $_GET['page'];
-        else
-            $page = 1;
+        $shop_name = $_SESSION['shop_name'];
+        $shop_city = $_SESSION['shop_city'];
+        $min_price = $_SESSION['min_price'];
+        $max_price = $_SESSION['max_price'];
+        $amount = $_SESSION['amount'];
+        $isShopStaff = $_SESSION['isShopStaff'];
+
+        $conditions = array();
+        if (empty($shop_name) && empty($shop_city) && !is_numeric($min_price) && !is_numeric($max_price) && $amount == -1 && $isShopStaff == 0) {
+            $sql_stmt = 'select * from shops';
+        }
+        else {
+            $conditions['shop_name'] = '%' . strtolower($shop_name). '%';
+            $conditions['shop_city'] = '%' . strtolower($shop_city). '%';
+            if (is_numeric($min_price)) {
+                if ($min_price < 0)
+                    throw new Exception("Price must be non-negative integer");
+                $conditions['min_price'] = $min_price;
+            }
+            if (is_numeric($max_price)) {
+                if ($max_price < 0)
+                    throw new Exception("Price must be non-negative integer");
+                $conditions['max_price'] = $max_price;
+            }
+
+            $sql_stmt = 'select * from shops where (lower(shop_name) like :shop_name) and (city like :shop_city)';
+
+            if (is_numeric($min_price) && is_numeric($max_price))
+                $sql_stmt .= 'and (per_mask_price between :min_price and :max_price)';
+            else if (is_numeric($min_price))
+                $sql_stmt .= 'and per_mask_price >= :min_price';
+            else if (is_numeric($max_price))
+                $sql_stmt .= 'and per_mask_price <= :max_price';
+
+            if ($amount == 0)
+                $sql_stmt .= 'and stock_quantity = 0';
+            else if ($amount == 1)
+                $sql_stmt .= 'and (stock_quantity between 1 and 499)';
+            else if ($amount == 2)
+                $sql_stmt .= 'and stock_quantity >= 500';
+
+            if ($isShopStaff == 1)
+                $sql_stmt .= 'and (shop_id in (select shop_id from shop_staffs where staff_id = ' . $_SESSION['user_id'] . '))';
+        }
+
+        $i = 0;
+        $shopIds = array();
+        $shopNames = array();
+        $shopCities = array();
+        $shopMaskPrices = array();
+        $shopStockQuantities = array();
+        $shopPhones = array();
+        $query = $connection->prepare($sql_stmt);
+        $query->execute($conditions);
+
+        while ($row = $query->fetch()) {
+            $shopIds[$i] = $row['shop_id'];
+            $shopNames[$i] = $row['shop_name'];
+            $shopCities[$i] = $row['city'];
+            $shopMaskPrices[$i] = $row['per_mask_price'];
+            $shopStockQuantities[$i] = $row['stock_quantity'];
+            $shopPhones[$i] = $row['phone_number'];
+            $i++;
+        }
+        
+        $listsPerPage = 5;
+        $totalLists = $i;
+        $totalPages = ceil($totalLists / $listsPerPage);
+        
+        $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 
         // pagination
         echo '<nav style="margin-top: 50px"aria-label="123"><ul class="pagination">';
@@ -165,7 +168,7 @@
             echo '<li class="page-item"> <a class="page-link" href=\'searchShop.php?page=' . $page - 1 . '\'" tabindex="-1" aria-disabled="true">Previous</a></li>';
 
         // item
-        for ($i = 1; $i <= $_SESSION['totalPages']; $i++) {
+        for ($i = 1; $i <= $totalPages; $i++) {
             if ($i == $page) {
                 echo "<li class='page-item active'><a class='page-link'>$i</a></li>";
             } else {
@@ -174,17 +177,76 @@
         }
 
         // next
-        if ($page < $_SESSION['totalPages'])
+        if ($page < $totalPages)
             echo '<li class="page-item"><a class="page-link" href=\'searchShop.php?page=' . $page + 1 . '\'">Next</a></li>';
         else
             echo '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 
         echo '</ul></nav>';
-        $showLists = min($_SESSION['totalLists'] - $listsPerPage * ($page - 1), $listsPerPage);
+        $showLists = min($totalLists - $listsPerPage * ($page - 1), $listsPerPage);
 
         // sort
-        if (!isset($_SESSION['order']))
-            $_SESSION['order'] = array_keys($_SESSION['shopNames']);
+        if (isset($_POST['sortName'])) {
+            if (!isset($_SESSION['sortShopName'])) 
+                $_SESSION['sortShopName'] = 1;
+            else 
+                $_SESSION['sortShopName'] ^= 1;
+            $_SESSION['sortBy'] = 0;
+        } 
+        else if (isset($_POST['sortCity'])) {
+            if (!isset($_SESSION['sortShopCity'])) 
+                $_SESSION['sortShopCity'] = 1;
+            else 
+                $_SESSION['sortShopCity'] ^= 1;
+            $_SESSION['sortBy'] = 1;
+        }
+        else if (isset($_POST['sortPrice'])) {
+            if (!isset($_SESSION['sortMaskPrice'])) 
+                $_SESSION['sortMaskPrice'] = 1;
+            else 
+                $_SESSION['sortMaskPrice'] ^= 1;
+            $_SESSION['sortBy'] = 2;
+        }
+        else if (isset($_POST['sortAmount'])) {
+            if (!isset($_SESSION['sortMaskAmount'])) 
+                $_SESSION['sortMaskAmount'] = 1;
+            else 
+                $_SESSION['sortMaskAmount'] ^= 1;
+            $_SESSION['sortBy'] = 3;
+        }
+        else if (isset($_POST['sortPhone'])) {
+            if (!isset($_SESSION['sortShopPhone'])) 
+                $_SESSION['sortShopPhone'] = 1;
+            else 
+                $_SESSION['sortShopPhone'] ^= 1;
+            $_SESSION['sortBy'] = 4;
+        }
+
+        $order;
+        if (!isset($_SESSION['sortBy']))
+            $order = array_keys($shopNames);
+        else {
+            if ($_SESSION['sortBy'] == 0) {
+                $_SESSION['sortShopName'] ? asort($shopNames) : arsort($shopNames);
+                $order = array_keys($shopNames);
+            }
+            else if ($_SESSION['sortBy'] == 1) {
+                $_SESSION['sortShopCity'] ? asort($shopCities) : arsort($shopCities);
+                $order = array_keys($shopCities);
+            }
+            else if ($_SESSION['sortBy'] == 2) {
+                $_SESSION['sortMaskPrice'] ? asort($shopMaskPrices) : arsort($shopMaskPrices);
+                $order = array_keys($shopMaskPrices);
+            }
+            else if ($_SESSION['sortBy'] == 3) {
+                $_SESSION['sortMaskAmount'] ? asort($shopStockQuantities) : arsort($shopStockQuantities);
+                $order = array_keys($shopStockQuantities);
+            }
+            else if ($_SESSION['sortBy'] == 4) {
+                $_SESSION['sortShopPhone'] ? asort($shopPhones) : arsort($shopPhones);
+                $order = array_keys($shopPhones);
+            }
+        }
 
         echo<<<EOT
             <div class="card profile">
@@ -193,37 +255,37 @@
                         <tr>
                             <th scope="col" onclick="handleSubmit(this, 'shop-name-trigger')">
                                 Shop Name
-                                <form action="sortResult.php" method="post">
+                                <form action="searchShop.php?page=$page" method="post">
                                     <input type="hidden" name="page" value="$page">
-                                    <button id="shop-name-trigger" style="display: none;" type="submit" name="shopName" value="1">Shop Name</button>
+                                    <button id="shop-name-trigger" style="display: none;" type="submit" name="sortName" value="1">Shop Name</button>
                                 </form>
                             </th>
                             <th scope="col" onclick="handleSubmit(this, 'shop-city-trigger')">
                                 Shop Location
-                                <form action="sortResult.php" method="post">
+                                <form action="searchShop.php?page=$page" method="post">
                                     <input type="hidden" name="page" value="$page">
-                                    <button id="shop-city-trigger" style="display: none;" type="submit" name="shopCity" value="1">Shop Location</button>
+                                    <button id="shop-city-trigger" style="display: none;" type="submit" name="sortCity" value="1">Shop Location</button>
                                 </form>
                             </th>
                             <th scope="col" onclick="handleSubmit(this, 'mask-price-trigger')">
                                 Per Mask Price
-                                <form action="sortResult.php" method="post">
+                                <form action="searchShop.php?page=$page" method="post">
                                     <input type="hidden" name="page" value="$page">    
-                                    <button id="mask-price-trigger" style="display: none;" type="submit" name="maskPrice" value="1">Per Mask Price</button>
+                                    <button id="mask-price-trigger" style="display: none;" type="submit" name="sortPrice" value="1">Per Mask Price</button>
                                 </form>
                             </th>
                             <th scope="col" onclick="handleSubmit(this, 'mask-amount-trigger')">
                                 Stock Quantity
-                                <form action="sortResult.php" method="post">
+                                <form action="searchShop.php?page=$page" method="post">
                                     <input type="hidden" name="page" value="$page">    
-                                    <button id="mask-amount-trigger" style="display: none;" type="submit" name="maskAmount" value="1">Stock Quantity</button>
+                                    <button id="mask-amount-trigger" style="display: none;" type="submit" name="sortAmount" value="1">Stock Quantity</button>
                                 </form>
                             </th>
                             <th scope="col" onclick="handleSubmit(this, 'shop-phone-trigger')">
                                 Phone Number
-                                <form action="sortResult.php" method="post">
+                                <form action="searchShop.php?page=$page" method="post">
                                     <input type="hidden" name="page" value="$page">    
-                                    <button id="shop-phone-trigger" style="display: none;" type="submit" name="shopPhone" value="1">Phone Number</button>
+                                    <button id="shop-phone-trigger" style="display: none;" type="submit" name="sortPhone" value="1">Phone Number</button>
                                 </form>
                             </th>
                             <th scope="col">
@@ -236,12 +298,12 @@
         for ($j = 0; $j < $showLists; $i++, $j++) {
             $className = ($j % 2) == 1 ? 'table-primary' : 'table-info';
 
-            $shop_id = $_SESSION['shopIds'][$_SESSION['order'][$i]];
-            $shop_name = $_SESSION['shopNames'][$_SESSION['order'][$i]];
-            $shop_city = $_SESSION['shopCities'][$_SESSION['order'][$i]];
-            $single_price = $_SESSION['shopMaskPrices'][$_SESSION['order'][$i]];
-            $stock_quantity = $_SESSION['shopStockQuantities'][$_SESSION['order'][$i]];
-            $shop_phone = $_SESSION['shopPhones'][$_SESSION['order'][$i]];
+            $shop_id = $shopIds[$order[$i]];
+            $shop_name = $shopNames[$order[$i]];
+            $shop_city = $shopCities[$order[$i]];
+            $single_price = $shopMaskPrices[$order[$i]];
+            $stock_quantity = $shopStockQuantities[$order[$i]];
+            $shop_phone = $shopPhones[$order[$i]];
 
             echo<<<EOT
             <tbody>
