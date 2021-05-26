@@ -28,7 +28,6 @@
         <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
         <meta name="theme-color" content="#7952b3">
 
-
         <style>
             .bd-placeholder-img {
                 font-size: 1.125rem;
@@ -124,10 +123,10 @@
                         <div class="form-floating">
                             <div class="select-label">Status</div>
                             <select class="form-select" name="status">
-                                <option value="3">All</option>"
-                                <option value="0">Not finished</option>"
-                                <option value="1">Finished</option>"
-                                <option value="2">Cancelled</option>"
+                                <option value="3">All</option>
+                                <option value="0">Not finished</option>
+                                <option value="1">Finished</option>
+                                <option value="2">Cancelled</option>
                             </select>
                         </div>
                         <button class="login-button w-100 btn btn-lg btn-primary" type="submit">Search</button>
@@ -135,6 +134,7 @@
                 </main>
                 
                 <form action="manageOrders.php" method="post">
+                    <input type="hidden" name="actionPage" value="0">
                     <button id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
                     <div class="card profile">
                         <table style="width: 100%" class="table">
@@ -155,10 +155,10 @@
                                     try {
                                         $sql_stmt = 'select 
                                                     A.order_id, A.order_status, A.create_time, B.account, A.finish_time, A.administer_id,
-                                                    D.shop_name, A.purchase_amount, A.purchase_price
+                                                    C.shop_name, A.purchase_amount, A.purchase_price
                                                     from orders A 
                                                     join users B on A.customer_id = B.user_id
-                                                    join shops D on A.shop_id = D.shop_id
+                                                    join shops C on A.shop_id = C.shop_id
                                                     where A.customer_id = ' . $_SESSION['user_id'];
                                         
                                         if (isset($_POST['status']) && $_POST['status'] != 3)
@@ -194,7 +194,6 @@
                                             
                                             $className = ($i % 2 ? 'table-primary' : 'table-info');
                                             echo<<<EOT
-                                                <tbody>
                                                 <tr class="$className">
                                                     <th scope="row">
                                             EOT;
@@ -217,7 +216,8 @@
                                                 echo<<<EOT
                                                     <form action="manageOrders.php" method="post">
                                                         <input type="hidden" name="order_id" value="$order_id">
-                                                        <button id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel Order</button>
+                                                        <input type="hidden" name="actionPage" value="0">
+                                                        <button id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
                                                     </form>
                                                 EOT;
                                             }
@@ -225,7 +225,6 @@
                                             echo<<<EOT
                                                 </td>
                                                 </tr>
-                                            </tbody>
                                             EOT;
                                             $i++;
                                         }
@@ -245,8 +244,6 @@
                                         EOT;
                                     }
                                 ?>
-                                <tr>
-                                </tr>
                             </tbody>
                         </table>
                     </div>

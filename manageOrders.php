@@ -73,14 +73,31 @@ try {
         if ($hasFail)
             throw new Exception($failMessage);
         
-        $dest_page = ($customer_id == $_SESSION['user_id'] ? 'myOrder.php' : 'shopOrder.php');
+        if (isset($_POST['actionPage']))
+            $dest_page = ($_POST['actionPage'] == 0 ? 'myOrder.php' : 'shopOrder.php');
+        else
+            $dest_page = 'myOrder.php';
         echo <<<EOT
             <!DOCTYPE html>
             <html>
                 <body>
                     <script>
-                        alert("Cancel Order Success!");
+                        alert("Cancel Order(s) Success!");
                         window.location.replace("$dest_page");
+                    </script>
+                </body>
+            </html>
+        EOT;
+        exit();
+    }
+    else if (isset($_POST['finishOrder'])) {
+        echo <<<EOT
+            <!DOCTYPE html>
+            <html>
+                <body>
+                    <script>
+                        alert("Finish Order(s) Success!");
+                        window.location.replace("shopOrder.php");
                     </script>
                 </body>
             </html>
