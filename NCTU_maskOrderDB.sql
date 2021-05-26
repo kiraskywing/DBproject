@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： localhost
--- 產生時間： 2021 年 05 月 09 日 11:28
+-- 產生時間： 2021 年 05 月 26 日 10:57
 -- 伺服器版本： 10.4.17-MariaDB
 -- PHP 版本： 8.0.2
 
@@ -29,13 +29,27 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
+  `order_status` char(1) NOT NULL,
+  `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `finish_time` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `customer_id` int(11) NOT NULL,
+  `administer_id` int(11) DEFAULT NULL,
   `shop_id` int(11) NOT NULL,
   `purchase_amount` int(11) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `finish_time` timestamp NULL DEFAULT NULL,
-  `order_status` tinyint(1) NOT NULL
+  `purchase_price` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 傾印資料表的資料 `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `order_status`, `create_time`, `finish_time`, `customer_id`, `administer_id`, `shop_id`, `purchase_amount`, `purchase_price`) VALUES
+(1, '0', '2021-05-25 14:08:56', NULL, 1, NULL, 3, 10, 11),
+(2, '0', '2021-05-26 01:39:04', NULL, 1, NULL, 4, 50, 75),
+(3, '0', '2021-05-26 01:46:30', NULL, 1, NULL, 17, 100, 4),
+(4, '0', '2021-05-26 01:50:13', NULL, 1, NULL, 25, 20, 12),
+(5, '0', '2021-05-26 02:02:06', NULL, 1, NULL, 17, 10, 4),
+(6, '0', '2021-05-26 08:24:46', NULL, 3, NULL, 3, 20, 11);
 
 -- --------------------------------------------------------
 
@@ -57,8 +71,8 @@ CREATE TABLE `shops` (
 --
 
 INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_quantity`, `phone_number`) VALUES
-(3, 'Shop AA', 'Taipei City', 50, 10, '0963714803'),
-(4, 'BB shop', 'Taichung City', 500, 1000, '0917466219'),
+(3, 'Shop AA', 'Taipei City', 11, 171, '0963714803'),
+(4, 'BB shop', 'Taichung City', 75, 950, '0917466219'),
 (5, 'Best Care Pharmacy', 'Keelung City', 242, 613, '0916299311'),
 (6, '278 Pharmacy', 'Pingtung City', 36, 406, '0910555488'),
 (7, 'Duane Reade', 'Hsinchu County', 81, 105, '0958047416'),
@@ -71,9 +85,12 @@ INSERT INTO `shops` (`shop_id`, `shop_name`, `city`, `per_mask_price`, `stock_qu
 (14, 'Alpina Pharmacy INC', 'Kaohsiung City', 333, 2000, '0934645597'),
 (15, 'Pharmacy Channel', 'Nantou City', 100, 777, '0960875980'),
 (16, 'All Health Pharmacy', 'Hualien City', 77, 400, '0982650559'),
-(17, 'Royal Care Pharmacy', 'Pingtung County', 4, 900, '0956037350'),
+(17, 'Royal Care Pharmacy', 'Pingtung County', 4, 790, '0956037350'),
 (18, 'Buy-Rite Pharmacy', 'Hualien County', 15, 200, '0911903836'),
-(19, 'People Choice Pharmacy', 'Taipei City', 25, 600, '0919153766');
+(19, 'People Choice Pharmacy', 'Taipei City', 25, 600, '0919153766'),
+(25, 'testShop', 'Keelung City', 12, 4501, '0923182376'),
+(26, 'C shoop', 'Hualien County', 5000, 0, '0938273615'),
+(27, 'transactionTest', 'Hsinchu City', 120, 3400, '0910232018');
 
 -- --------------------------------------------------------
 
@@ -94,6 +111,8 @@ CREATE TABLE `shop_staffs` (
 INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (1, 3, 1),
 (1, 4, 0),
+(1, 26, 0),
+(2, 3, 0),
 (2, 4, 1),
 (3, 3, 0),
 (3, 4, 0),
@@ -109,6 +128,7 @@ INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (9, 3, 0),
 (9, 12, 1),
 (10, 11, 1),
+(11, 3, 0),
 (11, 13, 1),
 (12, 14, 1),
 (13, 3, 0),
@@ -118,7 +138,9 @@ INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 (15, 17, 1),
 (16, 18, 1),
 (17, 19, 1),
-(20, 3, 0);
+(23, 27, 1),
+(25, 25, 1),
+(27, 26, 1);
 
 -- --------------------------------------------------------
 
@@ -128,7 +150,7 @@ INSERT INTO `shop_staffs` (`staff_id`, `shop_id`, `isMaster`) VALUES
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `account` varchar(40) NOT NULL,
+  `account` varchar(20) NOT NULL,
   `password` char(64) NOT NULL,
   `salt` char(4) NOT NULL,
   `phone_number` char(10) NOT NULL,
@@ -163,7 +185,11 @@ INSERT INTO `users` (`user_id`, `account`, `password`, `salt`, `phone_number`, `
 (20, 'violatoast', 'd479cc04021a43c0c1dc1722cc10b2291dae4d2de76cb749cd9d480806816fa5', '3683', '0929163821', 'Payton Willoughby', 'Chiayi County'),
 (21, 'lastradapuppy', '76b8170932bf5037784be853bc15c66758b263055fdf477d023ce9a4fdd94e2e', '7940', '0954071960', 'Wilburn Peterson', 'Penghu County'),
 (22, 'ostrichsputnik1', '469fbb47f8f6342dd2e40ae22d3be70653dcc0db96114a667eeaab440cc954af', '5204', '0939783818', 'Stafford Statham', 'Yunlin County'),
-(23, 'cokeabell1835tea', 'a861082bbfcf5893f62d6786af9fda905a7e2b9482f4d57c8a42865053bf8b97', '5591', '0982253254', 'Ernie Hicks', 'Taoyuan City');
+(23, 'cokeabell1835tea', 'a861082bbfcf5893f62d6786af9fda905a7e2b9482f4d57c8a42865053bf8b97', '5591', '0982253254', 'Ernie Hicks', 'Taoyuan City'),
+(24, 'super5566', '234d97ec9e00a19f02ac47ef6f8fbd7b6df9358be23375bb23b35e8758fd2d0b', '9729', '0921777836', 'Jessica Chen', 'Taitung City'),
+(25, 'testtest', '2c3f35b8215fdb1079298e068f4b38c8c34d8631940ea28e08575542b93633e4', '5925', '0910729323', 'TestAccount', 'Taitung City'),
+(26, 'testAccount', '185bbe6d24778e50ab69458351cd29da08c324a66a8c247d902ae034c7a9f570', '4830', '0912384726', 'Dummy Person', 'New Taipei City'),
+(27, 'user3', '3a98e437e42bd096a27a9fb14fd4588483f02bd87c1d7f04fa93403a2752c4e3', '7032', '0932837654', 'TA_3', 'Hsinchu City');
 
 --
 -- 已傾印資料表的索引
@@ -173,7 +199,10 @@ INSERT INTO `users` (`user_id`, `account`, `password`, `salt`, `phone_number`, `
 -- 資料表索引 `orders`
 --
 ALTER TABLE `orders`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `administer_id` (`administer_id`),
+  ADD KEY `shop_id` (`shop_id`);
 
 --
 -- 資料表索引 `shops`
@@ -199,20 +228,34 @@ ALTER TABLE `users`
 --
 
 --
+-- 使用資料表自動遞增(AUTO_INCREMENT) `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- 使用資料表自動遞增(AUTO_INCREMENT) `shops`
 --
 ALTER TABLE `shops`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- 已傾印資料表的限制式
 --
+
+--
+-- 資料表的限制式 `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`administer_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `shop_staffs`

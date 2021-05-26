@@ -37,7 +37,7 @@ try {
         EOT;
         exit();
     }
-    else if (isset($_POST['cancelOrder'])) {
+    else if (isset($_POST['cancelOrder']) || isset($_POST['finishOrder'])) {
         $orderIds = array();
         if (isset($_POST['orderIds']))
             $orderIds = $_POST['orderIds'];
@@ -46,6 +46,7 @@ try {
         else
             throw new Exception('No order_id!');
         
+        $statusToUpdate = (isset($_POST['cancelOrder']) ? 2 : 1);
         $hasFail = false;
         $failMessage = 'Failed order(s) : \n';
         foreach($orderIds as $order_id) {
@@ -64,7 +65,7 @@ try {
                 continue;
             }
     
-            $query = $connection->prepare('update orders set order_status = 2, administer_id = ' . $_SESSION['user_id'] . ' where order_id = ' . $order_id);
+            $query = $connection->prepare('update orders set order_status = ' . $statusToUpdate . ', administer_id = ' . $_SESSION['user_id'] . ' where order_id = ' . $order_id);
             $query->execute();
     
             $connection->commit();
@@ -73,13 +74,18 @@ try {
         if ($hasFail)
             throw new Exception($failMessage);
         
-        $dest_page = ($customer_id == $_SESSION['user_id'] ? 'myOrder.php' : 'shopOrder.php');
+        if (isset($_POST['actionPage']))
+            $dest_page = ($_POST['actionPage'] == 0 ? 'myOrder.php' : 'shopOrder.php');
+        else
+            $dest_page = 'myOrder.php';
+        $msg = ($statusToUpdate == 1 ? 'Finish' : 'Cancel');
+        $msg .= ' Order(s) Success!';
         echo <<<EOT
             <!DOCTYPE html>
             <html>
                 <body>
                     <script>
-                        alert("Cancel Order Success!");
+                        alert("$msg");
                         window.location.replace("$dest_page");
                     </script>
                 </body>
