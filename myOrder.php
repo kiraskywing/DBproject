@@ -351,19 +351,22 @@
                                                 <td>$finish_time<br>$admin_account</td>
                                                 <td>$shop_name</td>
                                                 <td>\$$total_price<br>($amount * \$$singlePrice)</td>
+                                                <td>
                                         EOT;
                                         
                                         if ($row[1] == 0) {
+                                            $user_id = $_SESSION['user_id'];
                                             echo<<<EOT
-                                                    <td>
-                                                        <form action="manageOrders.php" method="post">
-                                                            <button class="" type="submit">Cancel Order</button>
-                                                        </form>
-                                                    </td>
-                                            EOT;
+                                                    <form action="manageOrders.php" method="post">
+                                                        <input type="hidden" name="order_id" value="$order_id">
+                                                        <input type="hidden" name="admin_id" value="$user_id">
+                                                        <button class="" type="submit" name="cancelOrder" value="1">Cancel Order</button>
+                                                    </form>
+                                                EOT;
                                         }
-                                        
+                                                    
                                         echo<<<EOT
+                                            </td>
                                             </tr>
                                         </tbody>
                                         EOT;

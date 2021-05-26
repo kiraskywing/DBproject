@@ -315,11 +315,10 @@
                     <td>$shop_phone</td>
                     <td>
                         <form action="manageOrders.php" method="post">
-                            <input type="hidden" name="createOrder" value="1">
                             <input type="hidden" name="shop_id" value="$shop_id">
                             <input type="hidden" name="maskPrice" value="$single_price">
                             <input required min="1" oninput="handleOrderMaskAmount(this, $j, $stock_quantity)" type="number" name="maskAmount" placeholder=0>
-                            <button id="create-order-$j" class="" type="submit">Buy!</button>
+                            <button id="create-order-$j" class="" type="submit" name="createOrder" value="1">Buy!</button>
                             <div id="create-order-notice-$j" ></div>
                         </form>
                     </td>
