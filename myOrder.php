@@ -135,7 +135,7 @@
                 
                 <form action="manageOrders.php" method="post">
                     <input type="hidden" name="actionPage" value="0">
-                    <button id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
+                    <button style="width:300px; margin-bottom: 20px;" class="btn btn-lg btn-secondary" id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
                     <div class="card profile">
                         <table style="width: 100%" class="table">
                             <thead>
@@ -199,7 +199,7 @@
                                             EOT;
                                             if ($row[1] == 0) {
                                                 echo<<<EOT
-                                                    <input id="checkbox-$i" oninput="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
+                                                    <input class="form-check-input" id="checkbox-$i" oninput="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
                                                 EOT;
                                             }
                                             echo<<<EOT
@@ -217,7 +217,7 @@
                                                     <form action="manageOrders.php" method="post">
                                                         <input type="hidden" name="order_id" value="$order_id">
                                                         <input type="hidden" name="actionPage" value="0">
-                                                        <button id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
+                                                        <button class="btn btn-danger" id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
                                                     </form>
                                                 EOT;
                                             }
