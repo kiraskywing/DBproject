@@ -153,8 +153,8 @@
 
                 <form action="manageOrders.php" method="post">
                     <input type="hidden" name="actionPage" value="1">
-                    <button id="multiple-finish" name="finishOrder" value="1">Finish selected orders</button>
-                    <button id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
+                    <button style="margin-bottom: 20px; margin-right: 10px" class="btn btn-lg btn-warning" id="multiple-finish" name="finishOrder" value="1">Finish selected orders</button>
+                    <button style="margin-bottom: 20px" class="btn btn-lg btn-secondary" id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
                     <div class="card profile">
                         <table style="width: 100%" class="table">
                             <thead>
@@ -224,7 +224,7 @@
                                             EOT;
                                             if ($row[1] == 0) {
                                                 echo<<<EOT
-                                                    <input id="checkbox-$i" oninput="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
+                                                    <input class="form-check-input" id="checkbox-$i" oninput="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
                                                 EOT;
                                             }
                                             echo<<<EOT
@@ -242,8 +242,8 @@
                                                     <form action="manageOrders.php" method="post">
                                                         <input type="hidden" name="order_id" value="$order_id">
                                                         <input type="hidden" name="actionPage" value="1">
-                                                        <button id="single-finish-$i" class="" type="submit" name="finishOrder" value="1">Finish</button>
-                                                        <button id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
+                                                        <button class="btn btn-success" id="single-finish-$i" class="" type="submit" name="finishOrder" value="1">Finish</button>
+                                                        <button class="btn btn-danger" id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
                                                     </form>
                                                 EOT;
                                             }
