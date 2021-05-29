@@ -51,6 +51,7 @@
                         if (element.value <= amountLimit) {
                             hideNotice(idNotice);
                             enableCreateOrderButton(idButton);
+                            document.getElementById(idNotice).innerHTML = '';
                         }
                         else {
                             document.getElementById(idNotice).innerHTML = "Order quantity shouldn't be greater than stock quantity!";
