@@ -51,6 +51,7 @@
                         if (element.value <= amountLimit) {
                             hideNotice(idNotice);
                             enableCreateOrderButton(idButton);
+                            document.getElementById(idNotice).innerHTML = '';
                         }
                         else {
                             document.getElementById(idNotice).innerHTML = "Order quantity shouldn't be greater than stock quantity!";
@@ -318,7 +319,7 @@
                             <input type="hidden" name="shop_id" value="$shop_id">
                             <input type="hidden" name="maskPrice" value="$single_price">
                             <input required min="1" oninput="handleOrderMaskAmount(this, $j, $stock_quantity)" type="number" name="maskAmount" placeholder=0>
-                            <button id="create-order-$j" class="" type="submit" name="createOrder" value="1">Buy!</button>
+                            <button class="btn btn-light" id="create-order-$j" class="" type="submit" name="createOrder" value="1">Buy!</button>
                             <div id="create-order-notice-$j" ></div>
                         </form>
                     </td>

@@ -82,13 +82,33 @@
                 function disableSubmitButton(idName) {
                     document.getElementById(idName).disabled = true;
                 }
-                function enableSubmitButton(idName) {
+                function enableSubmitButtons(idName) {
                     document.getElementById(idName).disabled = false;
                 }
-                function handleButtons(element, index) {
-                    var buttonId = 'single-cancel-' + index;
+                function handleCheckboxAllItem (checkboxList) {
+                    const filteredCheckboxList = checkboxList.filter(c => c.checked);
+                    if (filteredCheckboxList.length === checkboxList.length) document.getElementById('checkbox-all').checked = true;
+                    else document.getElementById('checkbox-all').checked = false;
                 }
-                
+                function handleButtons(element, index) {
+                    const checkboxList = Object.values(document.getElementsByClassName('checkbox-item'));
+                    if (element.checked) enableSubmitButtons('multiple-cancel');
+                    else {
+                        const result = checkboxList.reduce((pre, e) => pre || e.checked, false);
+                        if (!result) disableSubmitButton('multiple-cancel');
+                    }
+                    handleCheckboxAllItem(checkboxList)
+                }
+                function handleCheckboxAll(element) {
+                    const checkboxList = Object.values(document.getElementsByClassName('checkbox-item'));
+                    if (element.checked) {
+                        checkboxList.forEach((c, index) => c.checked = true);
+                        enableSubmitButtons('multiple-cancel');
+                    } else {
+                        checkboxList.forEach(c => c.checked = false);
+                        disableSubmitButton('multiple-cancel');
+                    }
+                }
             </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -135,12 +155,14 @@
                 
                 <form action="manageOrders.php" method="post">
                     <input type="hidden" name="actionPage" value="0">
-                    <button id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
+                    <div style="width:100%; text-align: start">
+                        <button style="width:300px; margin-bottom: 20px;" disabled class="btn btn-lg btn-secondary" id="multiple-cancel" name="cancelOrder" value="1">Cancel selected orders</button>
+                    </div>
                     <div class="card profile">
                         <table style="width: 100%" class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col"></th>
+                                    <th scope="col"><input class="form-check-input" id="checkbox-all" onchange="handleCheckboxAll(this)" type="checkbox"></th>
                                     <th scope="col">Order ID</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Create Time</th>
@@ -199,7 +221,7 @@
                                             EOT;
                                             if ($row[1] == 0) {
                                                 echo<<<EOT
-                                                    <input id="checkbox-$i" oninput="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
+                                                    <input class="form-check-input checkbox-item" id="checkbox-$i" onchange="handleButtons(this, $i)" type="checkbox" name="orderIds[]" value="$order_id">
                                                 EOT;
                                             }
                                             echo<<<EOT
@@ -217,7 +239,7 @@
                                                     <form action="manageOrders.php" method="post">
                                                         <input type="hidden" name="order_id" value="$order_id">
                                                         <input type="hidden" name="actionPage" value="0">
-                                                        <button id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
+                                                        <button class="btn btn-danger" id="single-cancel-$i" class="" type="submit" name="cancelOrder" value="1">Cancel</button>
                                                     </form>
                                                 EOT;
                                             }
