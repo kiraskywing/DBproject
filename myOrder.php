@@ -65,6 +65,9 @@
             .show {
                 display: block;
             }
+            .hidden {
+                display: none;
+            }
             .select-label {
                 position: absolute;
                 top: 10px;
@@ -109,6 +112,13 @@
                         disableSubmitButton('multiple-cancel');
                     }
                 }
+                function checkDisplayCheckboxAll() {
+                    const checkboxList = Object.values(document.getElementsByClassName('checkbox-item'));
+                    if (checkboxList.length === 0) {
+                        document.getElementById('checkbox-all').classList.add('hidden');
+                    }
+                }
+                window.onload = checkDisplayCheckboxAll;
             </script>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
