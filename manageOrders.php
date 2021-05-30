@@ -52,11 +52,13 @@ try {
         foreach($orderIds as $order_id) {
             $connection->beginTransaction();
             
-            $query = $connection->prepare('select order_status, customer_id from orders where order_id = ' . $order_id);
+            $query = $connection->prepare('select order_status, shop_id, purchase_amount from orders where order_id = ' . $order_id);
             $query->execute();
             $row = $query->fetch();
-            $customer_id = $row[1];
             $status = $row[0];
+            $shop_id = $row[1];
+            $returnAmount = $row[2];
+
             if ($status != 0) {
                 $condition = ($status == 1 ? 'finished' : 'cancelled');
                 $failMessage .= 'Order id ' . $order_id . ' has been ' . $condition . '.\n';
@@ -67,6 +69,15 @@ try {
     
             $query = $connection->prepare('update orders set order_status = ' . $statusToUpdate . ', administer_id = ' . $_SESSION['user_id'] . ' where order_id = ' . $order_id);
             $query->execute();
+
+            if ($statusToUpdate == 2) {
+                $query = $connection->prepare('select stock_quantity from shops where shop_id = ' . $shop_id);
+                $query->execute();
+                $currentStockQuantity = $query->fetch()[0];
+                $currentStockQuantity += $returnAmount;
+                $query = $connection->prepare('update shops set stock_quantity = ' . $currentStockQuantity . ' where shop_id = ' . $shop_id);
+                $query->execute();
+            }
     
             $connection->commit();
         }
