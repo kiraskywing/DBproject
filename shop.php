@@ -276,13 +276,15 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                
                 <?php 
                     try {
+                        global $connection;
                         $query = $connection->prepare('select * from shop_staffs where isMaster = true and staff_id = ' . $_SESSION['user_id']);
                         $query->execute();
                         
                         if ($query->rowCount() == 0) {
-                            echo<<<EOT
+                ?>
                             <main class="form-signin">
                             <div class="shop-list">
                             <form action="registerShop.php" method="post">
@@ -294,23 +296,19 @@
                                     <label for="shop_name">Shop Name</label>
                                     <div id="shop-name-notice" class="place-right"></div>
                                 </div>
-                            EOT;
-                            
-                            echo<<<EOT
+
                                 <div class="form-floating">
                                     <div class="select-label">City of Shop Location</div>
-                                        <select class="form-select" name="shop_city">
-                                EOT;
-                            
+                                    <select class="form-select" name="shop_city">
+                                        
+                <?php
                             foreach ($cities as $city)
                                 echo   "<option value=\"" . $city . "\">" . $city . "</option>";
-                            
-                            echo<<<EOT
-                                        </select>
+                ?>
+                           
+                                    </select>
                                 </div>
-                            EOT;
-                            
-                            echo<<<EOT
+                           
                                 <div class="form-floating">
                                     <input required min="0" oninput="handleChangeMaskPrice(this)" type="number" class="form-control" name="pre_mask_price" id="pre_mask_price" placeholder=" ">
                                     <label for="pre_mask_price">Mask Price</label>
@@ -333,7 +331,8 @@
                                 </form>
                                 </div>   
                             </main>
-                            EOT;
+
+                <?php 
                         }
                         else {
                             $shop_id = $query->fetch()['shop_id'];
@@ -343,8 +342,8 @@
                             $row = $query->fetch();
                             $shop_name = $row['shop_name']; $shop_city = $row['city']; $shop_phone = $row['phone_number'];
                             $per_mask_price = $row['per_mask_price']; $stock_quantity = $row['stock_quantity'];
-                            
-                            echo<<<EOT
+                ?>          
+                  
                                 <main class="form-signin">
                                 <div class="card profile">
                                     <h2>My Shop</h2>
@@ -358,9 +357,9 @@
                                         </thead>
                                         <tbody>
                                             <tr class="table-warning">
-                                                <th scope='row'>$shop_name</th>
-                                                <td>$shop_city</td>
-                                                <td>$shop_phone</td>
+                                                <th scope='row'><?php echo $shop_name ?></th>
+                                                <td><?php echo $shop_city ?></td>
+                                                <td><?php echo $shop_phone ?></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -368,8 +367,8 @@
                                     <form action="updateShop.php" method="post">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon1">Per Mask Price</span>
-                                            <input required min="0" oninput="handleEditMaskPrice(this);" type="number" class="form-control" name="per_mask_price" placeholder="$per_mask_price" aria-label="per_mask_price" aria-describedby="basic-addon1">
-                                            <input type="hidden" name="shop_id" value="$shop_id">
+                                            <input required min="0" oninput="handleEditMaskPrice(this);" type="number" class="form-control" name="per_mask_price" placeholder="<?php echo $per_mask_price ?>" aria-label="per_mask_price" aria-describedby="basic-addon1">
+                                            <input type="hidden" name="shop_id" value="<?php echo $shop_id ?>">
                                             <button id="edit-mask-price" class="btn btn-lg btn-success" type="submit">Edit</button>
                                             <div id="edit-mask-price-notice" class="place-right"></div>
                                         </div>
@@ -377,15 +376,15 @@
                                     <form action="updateShop.php" method="post">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon2">Mask Amount</span>
-                                            <input required min="0" oninput="handleEditMaskAmount(this)" type="number" class="form-control" name="stock_quantity" placeholder="$stock_quantity" aria-label="stock_quantity" aria-describedby="basic-addon1">
-                                            <input type="hidden" name="shop_id" value="$shop_id">
+                                            <input required min="0" oninput="handleEditMaskAmount(this)" type="number" class="form-control" name="stock_quantity" placeholder="<?php echo $stock_quantity ?>" aria-label="stock_quantity" aria-describedby="basic-addon1">
+                                            <input type="hidden" name="shop_id" value="<?php echo $shop_id ?>">
                                             <button id="edit-mask-amount" class="btn btn-lg btn-info" type="submit">Edit</button>
                                             <div id="edit-mask-amount-notice" class="place-right">Mask Amount must be non-negative integer</div>
                                         </div>
                                     </form>
                                 </div>
-                                EOT;
-                            
+                                <!-- EOT; -->
+                <?php            
                             $query = $connection->prepare("select A.staff_id, B.account, B.phone_number, B.full_name, B.city
                                                         from shop_staffs A join users B on A.staff_id = B.user_id 
                                                         where A.shop_id = " . $shop_id . " and isMaster = false");

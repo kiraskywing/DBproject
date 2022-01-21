@@ -318,7 +318,7 @@
                             <select class="form-select" name="city">
                                 <?php
                                     foreach ($cities as $city)
-                                        echo "<option value=\"" . $city . "\">" . $city . "</option>";
+                                        echo "<option value='$city'>$city</option>";
                                 ?>
                             </select>
                         </div>
